@@ -1,4 +1,3 @@
----
 samba_user: sambauser
 samba_password: swimmy
 share_name: nas
