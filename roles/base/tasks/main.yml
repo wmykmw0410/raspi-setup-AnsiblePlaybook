@@ -1,0 +1,20 @@
+---
+- name: "{{ local_user }} を sudo グループに追加する"
+  ansible.builtin.user:
+    name: "{{ local_user }}"
+    groups: sudo
+    append: true
+
+- name: apt キャッシュを更新してパッケージをアップグレードする
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: dist
+
+- name: 不要パッケージ削除
+  ansible.builtin.apt:
+    autoremove: true
+
+- name: acl をインストールする
+  ansible.builtin.apt:
+    name: acl
+    state: present

@@ -1,0 +1,40 @@
+---
+- name: 必要パッケージインストール
+  ansible.builtin.apt:
+    name:
+      - wget
+      - gnupg
+      - apt-transport-https
+    state: present
+    update_cache: true
+
+- name: Microsoft GPGキー追加
+  ansible.builtin.shell: |
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
+  args:
+    creates: /usr/share/keyrings/microsoft.gpg
+
+- name: VSCode リポジトリ追加
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/vscode.list
+    content: |
+      deb [arch=arm64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main
+
+- name: apt update
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: VS Code インストール
+  ansible.builtin.apt:
+    name: code
+    state: present
+
+- name: 拡張機能リスト読み込み
+  ansible.builtin.set_fact:
+    vscode_extensions: "{{ lookup('file', role_path ~ '/files/extensions.txt').splitlines() | reject('match', '^#') | reject('equalto', '') | list }}"
+
+- name: VSCode 拡張機能インストール
+  become_user: "{{ vscode_user }}"
+  ansible.builtin.shell: |
+    code --install-extension {{ item }}
+  loop: "{{ vscode_extensions }}"

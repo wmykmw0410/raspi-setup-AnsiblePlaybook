@@ -1,0 +1,13 @@
+---
+- name: 共通セットアップ
+  hosts: all
+  become: true
+
+  roles:
+    - base
+    - locale
+    - keyboard
+    - browser
+    - python_env
+    - vscode
+    - minecraft

@@ -1,0 +1,19 @@
+---
+# 実行コマンド: ansible-playbook -i inventory/shinagawa.ini playbooks/nas.yml
+#              ansible-playbook -i inventory/mitaka.ini playbooks/nas.yml
+- import_playbook: common.yml
+
+- name: NASサーバーセットアップ
+  hosts: nas
+  become: true
+
+  roles:
+    - nas_server
+
+- name: 再起動
+  hosts: nas
+  become: true
+
+  tasks:
+    - name: 再起動する
+      ansible.builtin.reboot:

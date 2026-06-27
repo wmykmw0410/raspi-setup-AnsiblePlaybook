@@ -1,0 +1,18 @@
+---
+# 実行コマンド: ansible-playbook -i inventory/shinagawa.ini playbooks/client.yml
+- import_playbook: common.yml
+
+- name: クライアントセットアップ
+  hosts: client
+  become: true
+
+  roles:
+    - nas_mount
+
+- name: 再起動
+  hosts: client
+  become: true
+
+  tasks:
+    - name: 再起動する
+      ansible.builtin.reboot:

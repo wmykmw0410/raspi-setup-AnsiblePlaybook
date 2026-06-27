@@ -1,0 +1,6 @@
+local_user: swimmy
+vscode_user: swimmy
+ansible_user: swimmy
+ansible_password: swimmy
+ansible_become_password: swimmy
+ansible_python_interpreter: /usr/bin/python3

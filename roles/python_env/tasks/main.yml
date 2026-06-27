@@ -1,0 +1,10 @@
+---
+- name: Python環境インストール
+  ansible.builtin.apt:
+    name:
+      - python3
+      - python3-pip
+      - python3-pygame
+      - python3-flask
+    state: present
+    update_cache: true

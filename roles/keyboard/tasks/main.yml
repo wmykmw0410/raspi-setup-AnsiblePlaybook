@@ -1,0 +1,42 @@
+---
+- name: 日本語入力パッケージインストール
+  ansible.builtin.apt:
+    name:
+      - fcitx5
+      - fcitx5-mozc
+      - fonts-noto-cjk
+    state: present
+    update_cache: true
+
+- name: 入力メソッドをfcitx5に設定
+  ansible.builtin.command: im-config -n fcitx5
+
+- name: IM環境変数設定
+  ansible.builtin.copy:
+    dest: /etc/profile.d/fcitx5.sh
+    content: |
+      export GTK_IM_MODULE=fcitx
+      export QT_IM_MODULE=fcitx
+      export XMODIFIERS=@im=fcitx
+    mode: "0644"
+
+- name: コンソールキーボード用パッケージをインストール
+  ansible.builtin.apt:
+    name: console-setup
+    state: present
+    update_cache: true
+
+- name: キーボードレイアウトを日本語に設定
+  ansible.builtin.copy:
+    dest: /etc/default/keyboard
+    content: |
+      XKBMODEL="pc105"
+      XKBLAYOUT="jp"
+      XKBVARIANT=""
+      XKBOPTIONS=""
+      BACKSPACE="guess"
+    mode: "0644"
+
+- name: キーボード設定を反映する
+  ansible.builtin.command: dpkg-reconfigure -f noninteractive keyboard-configuration
+  changed_when: false

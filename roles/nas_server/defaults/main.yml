@@ -1,0 +1,6 @@
+---
+samba_user: sambauser
+samba_password: swimmy
+share_name: nas
+usb_device: /dev/sda1
+nas_mount: /media/swimmy/nas

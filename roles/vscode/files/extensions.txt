@@ -1,0 +1,32 @@
+# インデントを色分けして視覚的に見やすくする
+oderwat.indent-rainbow
+
+# スペルチェッカー（英語）
+streetsidesoftware.code-spell-checker
+
+# Markdown プレビュー・目次・ショートカット強化
+yzhang.markdown-all-in-one
+
+# Python 言語サポート
+ms-python.python
+
+# Python 静的型解析・補完（Pylance）
+ms-python.vscode-pylance
+
+# Python デバッガー
+ms-python.debugpy
+
+# Python コードフォーマッター（Black）
+ms-python.black-formatter
+
+# Python docstring 自動生成
+njpwerner.autodocstring
+
+# Flask スニペット
+cstrap.flask-snippets
+
+# HTML/CSS 補完・クラス名サジェスト
+ecmel.vscode-html-css
+
+# VS Code 日本語化
+ms-ceintl.vscode-language-pack-ja

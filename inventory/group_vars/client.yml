@@ -1,0 +1,4 @@
+nas_share: nas
+nas_user: sambauser
+nas_pass: swimmy
+mount_point: /mnt/nas

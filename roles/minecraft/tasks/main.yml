@@ -1,0 +1,29 @@
+---
+- name: install packages
+  ansible.builtin.apt:
+    name:
+      - git
+      - wget
+      - python3
+      - python3-setuptools
+    state: present
+
+- name: install Pi-Apps
+  become_user: "{{ local_user }}"
+  ansible.builtin.shell: wget -qO- https://raw.githubusercontent.com/Botspot/pi-apps/master/install | bash
+  args:
+    creates: "/home/{{ local_user }}/pi-apps"
+
+- name: install Minecraft Pi
+  become_user: "{{ local_user }}"
+  ansible.builtin.command: "/home/{{ local_user }}/pi-apps/manage install \"Minecraft Pi (Modded)\""
+
+- name: clone mcpi
+  ansible.builtin.git:
+    repo: https://github.com/martinohanlon/mcpi.git
+    dest: "/home/{{ local_user }}/mcpi"
+
+- name: install mcpi
+  ansible.builtin.command: python3 setup.py install
+  args:
+    chdir: "/home/{{ local_user }}/mcpi"
