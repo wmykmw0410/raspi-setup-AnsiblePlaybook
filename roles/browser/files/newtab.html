@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ショートカット</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
+      background: #f1f3f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      padding: 40px;
+      max-width: 720px;
+      width: 100%;
+    }
+
+    a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 16px;
+      text-decoration: none;
+      color: #202124;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+
+    a:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+      transform: translateY(-2px);
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+    .label {
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid">
+    <a href="https://manabi-gakushu.benesse.ne.jp/gakushu/typing/homeposition.html">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=manabi-gakushu.benesse.ne.jp&sz=64" alt="">
+      <span class="label">ホームポジション</span>
+    </a>
+    <a href="https://www.e-typing.ne.jp/">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=www.e-typing.ne.jp&sz=64" alt="">
+      <span class="label">e-typing</span>
+    </a>
+    <a href="https://docs.python.org/ja/3.11/">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=docs.python.org&sz=64" alt="">
+      <span class="label">Python ドキュメント</span>
+    </a>
+    <a href="https://makecode.microbit.org/?lang=ja">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=makecode.microbit.org&sz=64" alt="">
+      <span class="label">MakeCode micro:bit</span>
+    </a>
+    <a href="https://python.microbit.org/v/3">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=python.microbit.org&sz=64" alt="">
+      <span class="label">Python micro:bit</span>
+    </a>
+    <a href="https://westplain.sakura.ne.jp/translate/pygame/">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=westplain.sakura.ne.jp&sz=64" alt="">
+      <span class="label">Pygame ドキュメント</span>
+    </a>
+  </div>
+</body>
+</html>

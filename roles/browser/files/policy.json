@@ -3,12 +3,6 @@
   "HomepageIsNewTabPage": false,
   "RestoreOnStartup": 4,
   "RestoreOnStartupURLs": ["https://www.google.com"],
-  "ManagedBookmarks": [
-    { "name": "ホームポジション", "url": "https://manabi-gakushu.benesse.ne.jp/gakushu/typing/homeposition.html" },
-    { "name": "e-typing", "url": "https://www.e-typing.ne.jp/" },
-    { "name": "Python ドキュメント", "url": "https://docs.python.org/ja/3.11/" },
-    { "name": "MakeCode micro:bit", "url": "https://makecode.microbit.org/?lang=ja" },
-    { "name": "Python micro:bit", "url": "https://python.microbit.org/v/3" },
-    { "name": "Pygame ドキュメント", "url": "https://westplain.sakura.ne.jp/translate/pygame/" }
-  ]
+  "NewTabPageLocation": "file:///etc/chromium/newtab.html",
+  "PasswordManagerEnabled": false
 }
