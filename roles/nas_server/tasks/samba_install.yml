@@ -1,0 +1,8 @@
+---
+- name: Samba と exFAT サポートをインストールする
+  ansible.builtin.apt:
+    name:
+      - samba
+      - exfatprogs
+    state: present
+  tags: samba_install

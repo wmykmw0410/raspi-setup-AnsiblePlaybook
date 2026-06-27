@@ -1,0 +1,26 @@
+---
+- name: "{{ samba_user }} システムユーザーを作成する"
+  ansible.builtin.user:
+    name: "{{ samba_user }}"
+    shell: /usr/sbin/nologin
+    create_home: false
+  tags: samba_user
+
+- name: "{{ samba_user }} が Samba に登録済みか確認する"
+  ansible.builtin.command: pdbedit -L
+  register: pdbedit_list
+  changed_when: false
+  tags: samba_user
+
+- name: "{{ samba_user }} の Samba パスワードを設定する"
+  ansible.builtin.shell:
+    cmd: "printf '{{ samba_password }}\n{{ samba_password }}\n' | smbpasswd -a -s {{ samba_user }}"
+  no_log: true
+  when: samba_user not in pdbedit_list.stdout
+  tags: samba_user
+
+- name: "{{ samba_user }} を有効化する"
+  ansible.builtin.shell:
+    cmd: "smbpasswd -e {{ samba_user }}"
+  changed_when: false
+  tags: samba_user

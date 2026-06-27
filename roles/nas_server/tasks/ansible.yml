@@ -1,0 +1,6 @@
+---
+- name: Ansible をインストールする
+  ansible.builtin.apt:
+    name: ansible
+    state: present
+  tags: ansible_install
