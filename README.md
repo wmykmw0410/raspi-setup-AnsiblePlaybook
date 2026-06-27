@@ -15,11 +15,14 @@ Raspberry Pi をNASサーバー・クライアントとして構成する Ansibl
 ansible/
 ├── ansible.cfg
 ├── inventory/
-│   ├── shinagawa.ini       # 品川拠点（NAS・クライアント）
-│   ├── mitaka.ini          # 三鷹拠点（NAS・クライアント）
+│   ├── hosts/
+│   │   ├── shinagawa.ini   # 品川拠点（NAS・クライアント）
+│   │   ├── mitaka.ini      # 三鷹拠点（NAS・クライアント）
+│   │   └── kashiwa.ini     # 柏拠点（NAS・クライアント）
 │   └── group_vars/
 │       ├── all.yml         # 全ホスト共通変数
-│       └── client.yml      # クライアント専用変数
+│       ├── client.yml      # クライアント専用変数
+│       └── nas.yml         # NASサーバー専用変数
 ├── playbooks/
 │   ├── common.yml          # 共通ロール（全ホスト）
 │   ├── nas.yml             # NASサーバーセットアップ
@@ -28,13 +31,19 @@ ansible/
     ├── base/               # 共通: sudo・apt アップデート
     ├── locale/             # 共通: 日本語ロケール設定
     ├── keyboard/           # 共通: 日本語キーボード・入力設定
-    ├── browser/            # 共通: Chromium ホームページ・ブックマーク設定
+    ├── browser/            # 共通: Chromium 新しいタブページ・ポリシー設定
     ├── python_env/         # 共通: Python 環境
     ├── vscode/             # 共通: VS Code インストール
     ├── minecraft/          # 共通: Minecraft Pi
     ├── nas_server/         # NASサーバー: Samba・USB マウント設定
-    │   ├── defaults/main.yml   # NASサーバー変数
-    │   ├── tasks/main.yml
+    │   ├── handlers/main.yml   # ハンドラ（smbd 再起動）
+    │   ├── tasks/
+    │   │   ├── main.yml        # include_tasks エントリーポイント
+    │   │   ├── ansible.yml
+    │   │   ├── usb_mount.yml
+    │   │   ├── samba_install.yml
+    │   │   ├── samba_user.yml
+    │   │   └── samba_config.yml
     │   └── templates/smb.conf  # Samba 設定テンプレート
     └── nas_mount/          # クライアント: NAS マウント設定
 ```
@@ -227,7 +236,7 @@ NAS用USBドライブのみを接続すると、常に `/dev/sda1` として認�
 
 拠点ごとのインベントリファイルのIPアドレスを実際の環境に合わせて変更します。
 
-**品川拠点** `inventory/shinagawa.ini`:
+**品川拠点** `inventory/hosts/shinagawa.ini`:
 
 ```ini
 [client]
@@ -240,7 +249,7 @@ shinagawa-client
 192.168.0.10
 ```
 
-**三鷹拠点** `inventory/mitaka.ini`:
+**三鷹拠点** `inventory/hosts/mitaka.ini`:
 
 ```ini
 [client]
@@ -257,37 +266,37 @@ mitaka-client
 
 ```bash
 # 品川拠点
-ansible all -i inventory/shinagawa.ini -m ping
+ansible all -i inventory/hosts/shinagawa.ini -m ping
 
 # 三鷹拠点
-ansible all -i inventory/mitaka.ini -m ping
+ansible all -i inventory/hosts/mitaka.ini -m ping
 
 # 柏拠点
-ansible all -i inventory/kashiwa.ini -m ping
+ansible all -i inventory/hosts/kashiwa.ini -m ping
 ```
 
 ## Playbook の実行
 
 ```bash
 # NASサーバーセットアップ（共通ロール + Samba・USB マウント → 自動再起動）
-ansible-playbook -i inventory/shinagawa.ini playbooks/nas.yml
-ansible-playbook -i inventory/mitaka.ini playbooks/nas.yml
-ansible-playbook -i inventory/kashiwa.ini playbooks/nas.yml
+ansible-playbook -i inventory/hosts/shinagawa.ini playbooks/nas.yml
+ansible-playbook -i inventory/hosts/mitaka.ini playbooks/nas.yml
+ansible-playbook -i inventory/hosts/kashiwa.ini playbooks/nas.yml
 
 # クライアントセットアップ（拠点ごとに -i で指定 → 自動再起動）
 # ※ --limit client を付けないと NAS にも common ロールが実行されるため必須
-ansible-playbook -i inventory/shinagawa.ini playbooks/client.yml --limit client
-ansible-playbook -i inventory/mitaka.ini playbooks/client.yml --limit client
-ansible-playbook -i inventory/kashiwa.ini playbooks/client.yml --limit client
+ansible-playbook -i inventory/hosts/shinagawa.ini playbooks/client.yml --limit client
+ansible-playbook -i inventory/hosts/mitaka.ini playbooks/client.yml --limit client
+ansible-playbook -i inventory/hosts/kashiwa.ini playbooks/client.yml --limit client
 
 # ドライラン（実際には変更しない）
-ansible-playbook -i inventory/shinagawa.ini playbooks/nas.yml --check
-ansible-playbook -i inventory/kashiwa.ini playbooks/nas.yml --check
+ansible-playbook -i inventory/hosts/shinagawa.ini playbooks/nas.yml --check
+ansible-playbook -i inventory/hosts/kashiwa.ini playbooks/nas.yml --check
 ```
 
 ## NAS への接続方法
 
-接続時のユーザー名・パスワードは `roles/nas_server/defaults/main.yml` の値を使用します。
+接続時のユーザー名・パスワードは `inventory/group_vars/nas.yml` の値を使用します。
 
 | 項目 | デフォルト値 |
 |---|---|
@@ -328,7 +337,7 @@ mount_point: /mnt/nas     # クライアント側マウントポイント
 
 > NASのIPアドレスは拠点ごとのインベントリファイル（`[nas]` セクション）から自動的に参照されます。
 
-### NASサーバー専用 (`roles/nas_server/defaults/main.yml`)
+### NASサーバー専用 (`inventory/group_vars/nas.yml`)
 
 ```yaml
 samba_user: sambauser        # Samba アクセス用ユーザー
