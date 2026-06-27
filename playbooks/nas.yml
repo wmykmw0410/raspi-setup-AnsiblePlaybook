@@ -1,6 +1,4 @@
 ---
-# 実行コマンド: ansible-playbook -i inventory/shinagawa.ini playbooks/nas.yml
-#              ansible-playbook -i inventory/mitaka.ini playbooks/nas.yml
 - import_playbook: common.yml
 
 - name: NASサーバーセットアップ

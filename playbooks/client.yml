@@ -1,5 +1,4 @@
 ---
-# 実行コマンド: ansible-playbook -i inventory/shinagawa.ini playbooks/client.yml
 - import_playbook: common.yml
 
 - name: クライアントセットアップ
