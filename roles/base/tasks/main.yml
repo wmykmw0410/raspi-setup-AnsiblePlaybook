@@ -5,6 +5,12 @@
     groups: sudo
     append: true
 
+- name: "{{ local_user }} を input グループに追加する"
+  ansible.builtin.user:
+    name: "{{ local_user }}"
+    groups: input
+    append: true
+
 - name: apt キャッシュを更新してパッケージをアップグレードする
   ansible.builtin.apt:
     update_cache: true
