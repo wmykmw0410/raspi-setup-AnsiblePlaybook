@@ -34,6 +34,7 @@ ansible/
     ├── python_env/         # 共通: Python 環境
     ├── vscode/             # 共通: VS Code インストール
     ├── minecraft/          # 共通: Minecraft Pi
+    ├── mdns/               # 共通: avahi-daemon による mDNS (.local) 名前解決
     ├── nas_server/         # NASサーバー: Samba・USB マウント設定
     │   ├── handlers/main.yml   # ハンドラ（smbd 再起動）
     │   ├── tasks/
@@ -292,6 +293,8 @@ ansible-playbook -i inventory/kashiwa.ini playbooks/client.yml --limit client
 ansible-playbook -i inventory/shinagawa.ini playbooks/nas.yml --check
 ansible-playbook -i inventory/kashiwa.ini playbooks/nas.yml --check
 ```
+
+common ロール（`mdns`）適用後は、各ラズパイに `<hostname>.local`（例: `raspi-nas.local`）でIPアドレスの代わりにアクセスできます。
 
 ## NAS への接続方法
 
