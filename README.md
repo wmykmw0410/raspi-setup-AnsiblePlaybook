@@ -15,10 +15,9 @@ Raspberry Pi をNASサーバー・クライアントとして構成する Ansibl
 ansible/
 ├── ansible.cfg
 ├── inventory/
-│   ├── hosts/
-│   │   ├── shinagawa.ini   # 品川拠点（NAS・クライアント）
-│   │   ├── mitaka.ini      # 三鷹拠点（NAS・クライアント）
-│   │   └── kashiwa.ini     # 柏拠点（NAS・クライアント）
+│   ├── shinagawa.ini       # 品川拠点（NAS・クライアント）
+│   ├── mitaka.ini          # 三鷹拠点（NAS・クライアント）
+│   ├── kashiwa.ini         # 柏拠点（NAS・クライアント）
 │   └── group_vars/
 │       ├── all.yml         # 全ホスト共通変数
 │       ├── client.yml      # クライアント専用変数
@@ -236,7 +235,7 @@ NAS用USBドライブのみを接続すると、常に `/dev/sda1` として認�
 
 拠点ごとのインベントリファイルのIPアドレスを実際の環境に合わせて変更します。
 
-**品川拠点** `inventory/hosts/shinagawa.ini`:
+**品川拠点** `inventory/shinagawa.ini`:
 
 ```ini
 [client]
@@ -249,7 +248,7 @@ shinagawa-client
 192.168.0.10
 ```
 
-**三鷹拠点** `inventory/hosts/mitaka.ini`:
+**三鷹拠点** `inventory/mitaka.ini`:
 
 ```ini
 [client]
@@ -266,32 +265,32 @@ mitaka-client
 
 ```bash
 # 品川拠点
-ansible all -i inventory/hosts/shinagawa.ini -m ping
+ansible all -i inventory/shinagawa.ini -m ping
 
 # 三鷹拠点
-ansible all -i inventory/hosts/mitaka.ini -m ping
+ansible all -i inventory/mitaka.ini -m ping
 
 # 柏拠点
-ansible all -i inventory/hosts/kashiwa.ini -m ping
+ansible all -i inventory/kashiwa.ini -m ping
 ```
 
 ## Playbook の実行
 
 ```bash
 # NASサーバーセットアップ（共通ロール + Samba・USB マウント → 自動再起動）
-ansible-playbook -i inventory/hosts/shinagawa.ini playbooks/nas.yml
-ansible-playbook -i inventory/hosts/mitaka.ini playbooks/nas.yml
-ansible-playbook -i inventory/hosts/kashiwa.ini playbooks/nas.yml
+ansible-playbook -i inventory/shinagawa.ini playbooks/nas.yml
+ansible-playbook -i inventory/mitaka.ini playbooks/nas.yml
+ansible-playbook -i inventory/kashiwa.ini playbooks/nas.yml
 
 # クライアントセットアップ（拠点ごとに -i で指定 → 自動再起動）
 # ※ --limit client を付けないと NAS にも common ロールが実行されるため必須
-ansible-playbook -i inventory/hosts/shinagawa.ini playbooks/client.yml --limit client
-ansible-playbook -i inventory/hosts/mitaka.ini playbooks/client.yml --limit client
-ansible-playbook -i inventory/hosts/kashiwa.ini playbooks/client.yml --limit client
+ansible-playbook -i inventory/shinagawa.ini playbooks/client.yml --limit client
+ansible-playbook -i inventory/mitaka.ini playbooks/client.yml --limit client
+ansible-playbook -i inventory/kashiwa.ini playbooks/client.yml --limit client
 
 # ドライラン（実際には変更しない）
-ansible-playbook -i inventory/hosts/shinagawa.ini playbooks/nas.yml --check
-ansible-playbook -i inventory/hosts/kashiwa.ini playbooks/nas.yml --check
+ansible-playbook -i inventory/shinagawa.ini playbooks/nas.yml --check
+ansible-playbook -i inventory/kashiwa.ini playbooks/nas.yml --check
 ```
 
 ## NAS への接続方法
