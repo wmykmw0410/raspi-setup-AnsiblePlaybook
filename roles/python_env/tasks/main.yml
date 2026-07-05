@@ -8,3 +8,9 @@
       - python3-flask
     state: present
     update_cache: true
+
+- name: keyboardモジュールをインストールする
+  ansible.builtin.pip:
+    name: keyboard
+    state: present
+    extra_args: --break-system-packages
