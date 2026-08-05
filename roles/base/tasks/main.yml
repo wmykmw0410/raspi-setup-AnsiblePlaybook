@@ -24,3 +24,26 @@
   ansible.builtin.apt:
     name: acl
     state: present
+
+- name: 不要な cups-browsed を停止・無効化する
+  ansible.builtin.systemd:
+    name: cups-browsed
+    state: stopped
+    enabled: false
+    masked: true
+
+- name: cups-browsed 起動要求時のpolkit認証プロンプトを抑止する
+  ansible.builtin.copy:
+    dest: /etc/polkit-1/rules.d/49-cups-browsed-no-prompt.rules
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      // cups-browsed はマスク済みで実際には起動しないため、
+      // 起動/停止操作の認証プロンプトを無条件で許可し表示させない
+      polkit.addRule(function(action, subject) {
+          if (action.id == "org.freedesktop.systemd1.manage-units" &&
+              action.lookup("unit") == "cups-browsed.service") {
+              return polkit.Result.YES;
+          }
+      });
