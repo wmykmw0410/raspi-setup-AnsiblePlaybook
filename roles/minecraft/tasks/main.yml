@@ -14,6 +14,11 @@
   args:
     creates: "/home/{{ local_user }}/pi-apps"
 
+- name: remove Pi-Apps shortcut from desktop
+  ansible.builtin.file:
+    path: "/home/{{ local_user }}/Desktop/pi-apps.desktop"
+    state: absent
+
 - name: install Minecraft Pi
   become_user: "{{ local_user }}"
   ansible.builtin.command: "/home/{{ local_user }}/pi-apps/manage install \"Minecraft Pi (Modded)\""
