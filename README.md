@@ -4,13 +4,9 @@ Raspberry Pi をNASサーバー・クライアントとして構成する Ansibl
 
 ## Ansibleとは
 
-Ansible は、サーバーやPCなどの構成管理・自動化を行うオープンソースのツールです。
+Ansible は、サーバーやPCなどの構成管理・自動化を行うオープンソースのツールです。エージェントレスかつ宣言的な設定（Playbook）、冪等性が特徴で、`ansible-playbook` コマンドを実行するだけで拠点間・端末間で同一の設定を再現できます。基本用語や仕組みの詳細は [Ansibleとは（詳細）](docs/about-ansible.md) を参照してください。
 
-- **エージェントレス**: 対象端末に専用ソフトウェアを事前インストールする必要がなく、SSHで接続できればセットアップ可能
-- **宣言的な設定（Playbook）**: 「どうやるか」ではなく「どうあるべきか」をYAML形式の Playbook に記述する
-- **冪等性**: 同じ Playbook を何度実行しても、既に設定済みの項目はスキップされ、常に同じ状態に収束する
-
-このリポジトリでは、複数拠点・複数台の Raspberry Pi（NASサーバー・クライアント）に対して、OSセットアップ後の各種インストール・設定作業を Ansible で自動化しています。手作業でのセットアップと異なり、`ansible-playbook` コマンドを実行するだけで、拠点間・端末間で同一の設定を再現できます。
+このリポジトリでは、複数拠点・複数台の Raspberry Pi（NASサーバー・クライアント）に対して、OSセットアップ後の各種インストール・設定作業を Ansible で自動化しています。
 
 ## サービス概要
 
@@ -37,13 +33,15 @@ Samba によるファイル共有サーバーです。
 
 - 日本語ロケール（`ja_JP.UTF-8`）・日本語キーボード（`fcitx5-mozc`）設定
 - mDNS（avahi-daemon）による `<hostname>.local` 名前解決
-- sudo権限付与、apt パッケージの自動アップデート
+- sudo権限付与、apt パッケージの自動アップデート、不要な印刷サービス（cups-browsed）の無効化
+- Git のインストール
+- スクリーンショットアプリ（gnome-screenshot）のインストール
 
 ## 前提条件
 
 ### 実行元PC
 
-- Ansible インストール済み（詳細は下記「Ansible インストール（実行元PC）」参照）
+- Ansible インストール済み（未インストールの場合は [Ansible インストール手順](docs/setup-controller.md) を参照）
 
 ### クライアント用(授業用)
 
@@ -56,15 +54,19 @@ Samba によるファイル共有サーバーです。
 - SSH 接続可能な状態
 - USB ドライブが exFAT フォーマット済み
 
+`Raspberry Pi OS` のインストール・初期設定手順は [Raspberry Pi OS セットアップ手順](docs/setup-raspberrypi.md) を参照してください。
+
 ## ファイル構成
 
 ```
 ansible/
 ├── ansible.cfg
+├── docs/                   # セットアップ手順・トラブルシューティング・変数リファレンス
 ├── inventory/
 │   ├── shinagawa.ini       # 品川拠点（NAS・クライアント）
 │   ├── mitaka.ini          # 三鷹拠点（NAS・クライアント）
 │   ├── kashiwa.ini         # 柏拠点（NAS・クライアント）
+│   ├── takadanobaba.ini    # 高田馬場拠点（NAS・クライアント）
 │   └── group_vars/
 │       ├── all.yml         # 全ホスト共通変数
 │       ├── client.yml      # クライアント専用変数
@@ -79,7 +81,15 @@ ansible/
     ├── keyboard/           # 共通: 日本語キーボード・入力設定
     ├── browser/            # 共通: Chromium 新しいタブページ・ポリシー設定
     ├── python_env/         # 共通: Python 環境
+    ├── git/                # 共通: Git インストール
+    ├── screenshot/         # 共通: スクリーンショットアプリ（gnome-screenshot）インストール
     ├── vscode/             # 共通: VS Code インストール
+    │   ├── tasks/
+    │   │   ├── main.yml        # include_tasks エントリーポイント
+    │   │   ├── install.yml     # VS Code 本体インストール
+    │   │   ├── extensions.yml  # 拡張機能インストール
+    │   │   └── settings.yml    # ユーザー設定（エクスプローラー・キーボードショートカット等）
+    │   └── files/extensions.txt # 拡張機能リスト
     ├── minecraft/          # 共通: Minecraft Pi
     ├── mdns/               # 共通: avahi-daemon による mDNS (.local) 名前解決
     ├── nas_server/         # NASサーバー: Samba・USB マウント設定
@@ -95,330 +105,39 @@ ansible/
     └── nas_mount/          # クライアント: NAS マウント設定
 ```
 
-## Ansible インストール（実行元PC）
-
-Ansible を実行するPCにAnsibleをインストールします。OSごとの手順は以下の通りです。
-
-> 仮想環境（venv）の利用は任意です。他のPythonプロジェクトとパッケージを分離したい場合は、`pip install` の前に以下を実行してください（以降、`pip` / `ansible` コマンドを使うたびに `source` の実行が必要です）。
->
-> ```bash
-> python3 -m venv ~/.venv/ansible
-> source ~/.venv/ansible/bin/activate    # Windows(WSL)は同じ、Windows(PowerShell等)は非対応のためWSL必須
-> ```
-
-### macOS
-
-1. Python のバージョンを確認します（3.9 以上が必要）。未インストールの場合は [Homebrew](https://brew.sh/) 等でインストールします。
-
-   ```bash
-   python3 --version
-   ```
-
-2. Ansible をインストールします。
-
-   ```bash
-   pip3 install --upgrade pip
-   pip3 install ansible
-   ```
-
-3. インストールを確認します。
-
-   ```bash
-   ansible --version
-   ```
-
-### Windows
-
-Ansible の実行環境は Linux/macOS 前提のため、Windows では **WSL（Windows Subsystem for Linux）** を利用します。
-
-1. PowerShell を管理者権限で開き、WSL と Ubuntu をインストールします。
-
-   ```powershell
-   wsl --install
-   ```
-
-   インストール後、PCを再起動しUbuntuの初回セットアップ（ユーザー名・パスワード設定）を行います。
-
-2. WSL（Ubuntu）のターミナルを開き、パッケージを更新して Python / pip をインストールします。
-
-   ```bash
-   sudo apt update
-   sudo apt install -y python3 python3-pip
-   ```
-
-3. Ansible をインストールします。
-
-   ```bash
-   pip3 install --upgrade pip
-   pip3 install ansible
-   ```
-
-4. インストールを確認します。
-
-   ```bash
-   ansible --version
-   ```
-
-> 以降の `ansible` / `ansible-playbook` コマンドはすべて WSL（Ubuntu）のターミナル上で実行してください。
-
-### Linux（Ubuntu/Debian系）
-
-1. パッケージを更新して Python / pip をインストールします。
-
-   ```bash
-   sudo apt update
-   sudo apt install -y python3 python3-pip
-   ```
-
-2. Ansible をインストールします。
-
-   ```bash
-   pip3 install --upgrade pip
-   pip3 install ansible
-   ```
-
-3. インストールを確認します。
-
-   ```bash
-   ansible --version
-   ```
-
-バージョン情報が表示されればインストール完了です。
-
-## Raspberry Pi OS セットアップ（手動）
-
-Ansible 実行前に各ラズパイで以下を手動で行います。
-
-### 1. OS を書き込む
-
-[Raspberry Pi Imager](https://www.raspberrypi.com/software/) でSDカードに書き込みます。
-
-- **NASサーバー・クライアント共通**: Raspberry Pi OS（64-bit）推奨
-
-Imager の Setup steps に沿って以下を設定します。
-
-**Device**
-
-| 項目 | 設定値 |
-|---|---|
-| デバイス | `Raspberry Pi 4` |
-
-**OS**
-
-| 項目 | 設定値 |
-|---|---|
-| OS | `Raspberry Pi OS (64-bit)`（Recommended） |
-
-**ストレージ**
-
-| 項目 | 設定値 |
-|---|---|
-| ストレージ | 書き込み先の SD カードを選択 |
-
-**Customisation → Hostname**
-
-| 項目 | 設定値 |
-|---|---|
-| ホスト名 | NASサーバー: `raspi-nas` / クライアント: `raspi0x`（x = IPアドレス第4オクテットの一の位、例: IP末尾が13なら `raspi03`） |
-
-**Customisation → Localisation**
-
-| 項目 | 設定値 |
-|---|---|
-| Capital city | `Tokyo (Japan)` |
-| Time zone | `Asia/Tokyo` |
-| キーボードレイアウト | `jp` |
-
-**Customisation → User**
-
-| 項目 | 設定値 |
-|---|---|
-| ユーザー名 | `swimmy` |
-| パスワード | `swimmy` |
-
-**Customisation → Wi-Fi**
-
-| 項目 | 設定値 |
-|---|---|
-| Wi-Fi | 必要に応じて設定 |
-
-**Customisation → Remote access**
-
-| 項目 | 設定値 |
-|---|---|
-| SSH | 有効化（パスワード認証） |
-
-**Customisation → Raspberry Pi Connect**
-
-| 項目 | 設定値 |
-|---|---|
-| Enable Raspberry Pi Connect | 無効（OFF） |
-
-**Writing**
-
-Summary に以下が表示されていることを確認して「WRITE」をクリックします。
-
-| 項目 | 値 |
-|---|---|
-| Device | Raspberry Pi 4 |
-| Operating system | Raspberry Pi OS (64-bit) |
-| Storage | 書き込み先の SD カード |
-
-Customisations to apply に以下が表示されていることを確認します。
-
-- Hostname configured
-- Localisation configured
-- User account configured
-- SSH enabled
-
-### 2. IPアドレスを確認する
-
-ラズパイ起動後、SSH でログインしてIPアドレスを確認します。
-
-```bash
-# ラズパイ上で実行
-ip addr show
-```
-
-または、ルーターの管理画面から確認します。
-
-### 3. IPアドレスを固定化する(GUI/CUIのどちらかを実施)
-#### GUI
-
-1. タスクバー右上のネットワークアイコンを右クリック →「Edit Connections...」を選択
-2. 使用中の接続（有線: `Wired connection 1` など）を選択 → 鉛筆アイコン（編集）をクリック
-3. 「IPv4 Settings」タブを開く
-4. 「Method」を `Automatic (DHCP)` → `Manual` に変更
-5. 「Add」をクリックし、以下を入力する
-
-   | 項目 | 値 |
-   |---|---|
-   | Address | `192.168.0.13` |
-   | Netmask | `24` |
-   | Gateway | `192.168.0.1` |
-
-6. 「DNS servers」に `8.8.8.8` を入力
-7. 「Save」をクリック
-8. ネットワークアイコンから一度切断し、再接続する
-
-#### CLI
-ラズパイ上で以下のコマンドを実行します。接続名（`有線接続 1` など）は環境によって異なるため、事前に確認します。
-
-```bash
-# 接続名を確認する
-nmcli con show
-```
-
-確認した接続名を使って固定IPを設定します。
-
-```bash
-# NASサーバーの場合（例: 品川 192.168.0.10 / 三鷹 192.168.50.10）
-sudo nmcli con mod "有線接続 1" \
-  ipv4.method manual \
-  ipv4.addresses <NASのIPアドレス>/24 \
-  ipv4.gateway <ゲートウェイ> \
-  ipv4.dns "8.8.8.8 8.8.4.4"
-sudo nmcli con up "有線接続 1"
-
-# クライアントの場合（192.168.0.13）
-sudo nmcli con mod "有線接続 1" \
-  ipv4.method manual \
-  ipv4.addresses 192.168.0.13/24 \
-  ipv4.gateway 192.168.0.1 \
-  ipv4.dns "8.8.8.8 8.8.4.4"
-sudo nmcli con up "有線接続 1"
-```
-
-設定後、固定IPで再接続できることを確認します。
-
-```bash
-ip addr show
-```
-
-
-### 4. SSH 接続を確認する
-
-実行元PCから接続できることを確認します。
-
-```bash
-ssh swimmy@<IPアドレス>
-```
-
-> **ラズパイを作り直した（SDカードを焼き直した）場合**
-> 同じIPアドレスでもSSHホストキーが変わるため、`WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!` という警告が出て接続できません。
-> 以下のコマンドで実行元PCの `known_hosts` から古い鍵を削除してから、再度SSH接続してください。
->
-> ```bash
-> ssh-keygen -R <IPアドレス>
-> ```
->
-> 削除後、再度 `ssh swimmy@<IPアドレス>` を実行すると鍵の確認を求められるので `yes` と入力して承認します。
->
-> ```bash
-> ssh swimmy@<IPアドレス>
-> # The authenticity of host '<IPアドレス>' can't be established.
-> # ...
-> # Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-> ```
->
-> このリポジトリの `ansible.cfg` では `host_key_checking = False` によりAnsible自体はホストキー不一致でも実行できますが、疎通確認・パスワード認証の動作確認を兼ねて、`ansible-playbook` の前に一度手動SSHで接続できることを確認してください。
-
-### 5. （NASサーバーのみ）USB デバイスパスを確認する
-
-USB ドライブを接続して、デバイスパスを確認します。
-
-```bash
-lsblk
-```
-
-出力例:
-```
-NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-sda           8:0    1  119G  0 disk
-└─sda1        8:1    1  119G  0 part
-mmcblk0     179:0    0   32G  0 disk
-├─mmcblk0p1 179:1    0  256M  0 part /boot
-└─mmcblk0p2 179:2    0 31.8G  0 part /
-```
-
-`/dev/sda1` 以外のパスが表示された場合は、他のUSBストレージデバイスが接続されていないか確認します。
-NAS用USBドライブのみを接続すると、常に `/dev/sda1` として認識されます。
-
----
-
 ## Ansible セットアップ手順
 
 ### 1. 接続先を編集する
 
-拠点ごとのインベントリファイルのIPアドレスを実際の環境に合わせて変更します。
+拠点ごとのインベントリファイルを実際の環境に合わせて変更します。`[nas]` はIPアドレスで記載します。`[client]` は最終的にホスト名（`<hostname>.local`）で記載しますが、`mdns` ロール適用前（初回セットアップ時）は `.local` の名前解決ができないため、**初回のみIPアドレスを記載**し、初回セットアップ完了後にホスト名へ書き換えます（詳細は [Playbook の実行](#playbook-の実行) 参照）。
 
-**品川拠点** `inventory/shinagawa.ini`:
+インベントリファイルは拠点ごとに `inventory/` 配下に分かれており、いずれも同じ `[client]` / `[nas]` の構成です。
 
-```ini
-[client]
-shinagawa-client ansible_host=192.168.0.13
+| 拠点 | ファイル |
+|---|---|
+| 品川 | `inventory/shinagawa.ini` |
+| 三鷹 | `inventory/mitaka.ini` |
+| 柏 | `inventory/kashiwa.ini` |
+| 高田馬場 | `inventory/takadanobaba.ini` |
 
-[shinagawa]
-shinagawa-client
-
-[nas]
-192.168.0.10
-```
+以下は三鷹拠点を例にした編集内容です。他拠点も同様の形式で該当ファイルを編集してください。
 
 **三鷹拠点** `inventory/mitaka.ini`:
 
 ```ini
 [client]
-mitaka-client ansible_host=192.168.0.13
-
-[mitaka]
-mitaka-client
+# 初回セットアップ時（mDNS未設定）: IPアドレスを記載
+raspi01 ansible_host=192.168.50.11
+# 初回セットアップ完了後: ホスト名に書き換える
+# raspi01 ansible_host=raspi01.local
 
 [nas]
 192.168.50.10
 ```
 
 ### 2. 疎通確認
+
+`ansible` コマンドで対象ホストにSSH接続できるか確認します。`-i` で使用するインベントリファイルを指定し、`all` でそのファイル内の全ホスト（`[client]`・`[nas]`）に対して `-m ping` モジュール（Pythonが実行できるか確認するAnsibleの疎通確認モジュール。ネットワークの `ping` コマンドとは異なります）を実行します。
 
 ```bash
 # 品川拠点
@@ -429,28 +148,76 @@ ansible all -i inventory/mitaka.ini -m ping
 
 # 柏拠点
 ansible all -i inventory/kashiwa.ini -m ping
+
+# 高田馬場拠点
+ansible all -i inventory/takadanobaba.ini -m ping
 ```
 
+特定のホストのみ確認したい場合は、`all` の代わりにホスト名を指定します。
+
+```bash
+ansible raspi01 -i inventory/mitaka.ini -m ping
+```
+
+接続できない場合は [トラブルシューティング](docs/troubleshooting.md) を参照してください。
+
 ## Playbook の実行
+
+### 初回セットアップ時の注意（mDNS未設定の場合）
+
+手順1の通り、`mdns` ロール適用前の初回セットアップ時はインベントリファイルの `[client]` にIPアドレスを記載します。
+
+ラズパイを作り直した場合はSSHホスト鍵が変わり`known_hosts`との不一致警告で接続できなくなります。その場合は [トラブルシューティング](docs/troubleshooting.md) を参照して対処してから実行してください。
+
+```bash
+# 初回のみ: --limit で対象ホストを1台に絞って実行
+# ※ 他拠点の場合は -i を該当のインベントリファイルに置き換える
+ansible-playbook -i inventory/shinagawa.ini playbooks/client.yml --limit <ホスト名>
+```
+
+`--limit <ホスト名>` の `<ホスト名>` は、手順1でインベントリファイルの `[client]` に追加したホスト名（`raspi01` など。IPアドレスではなくインベントリ上のホスト名を指定します）です。複数台を同時に初回セットアップする場合は、ホストごとに `--limit` を変えてコマンドを1回ずつ実行します。
+
+初回セットアップ完了後（`mdns` ロール適用後）は、インベントリファイルの `[client]` を手順1の通りホスト名（`<hostname>.local`）に書き換えます。以降は以下の通常コマンドで実行できます。
+
+`ansible-playbook` は `-i` で指定したインベントリファイルに対して、`playbooks/` 配下のPlaybookを実行します。`nas.yml` は `hosts: nas`（NASサーバー）、`client.yml` は `hosts: client`（クライアント端末）を対象に、それぞれ `common.yml`（全ホスト共通ロール）を取り込んだ上で拠点固有のロールを適用し、最後に自動再起動します。
 
 ```bash
 # NASサーバーセットアップ（共通ロール + Samba・USB マウント → 自動再起動）
 ansible-playbook -i inventory/shinagawa.ini playbooks/nas.yml
 ansible-playbook -i inventory/mitaka.ini playbooks/nas.yml
 ansible-playbook -i inventory/kashiwa.ini playbooks/nas.yml
+ansible-playbook -i inventory/takadanobaba.ini playbooks/nas.yml
+```
 
-# クライアントセットアップ（拠点ごとに -i で指定 → 自動再起動）
+```bash
+# クライアントセットアップ（自動再起動）
 # ※ --limit client を付けないと NAS にも common ロールが実行されるため必須
 ansible-playbook -i inventory/shinagawa.ini playbooks/client.yml --limit client
 ansible-playbook -i inventory/mitaka.ini playbooks/client.yml --limit client
 ansible-playbook -i inventory/kashiwa.ini playbooks/client.yml --limit client
+ansible-playbook -i inventory/takadanobaba.ini playbooks/client.yml --limit client
+```
 
-# ドライラン（実際には変更しない）
+`--check` を付けると実際には変更を適用せず、変更予定の内容だけを確認できます（ドライラン）。
+
+```bash
 ansible-playbook -i inventory/shinagawa.ini playbooks/nas.yml --check
+ansible-playbook -i inventory/mitaka.ini playbooks/nas.yml --check
 ansible-playbook -i inventory/kashiwa.ini playbooks/nas.yml --check
+ansible-playbook -i inventory/takadanobaba.ini playbooks/nas.yml --check
 ```
 
 common ロール（`mdns`）適用後は、各ラズパイに `<hostname>.local`（例: `raspi-nas.local`）でIPアドレスの代わりにアクセスできます。
+
+## VS Code の日本語化（クライアントのみ・手動）
+
+`vscode` ロールで日本語言語パック（`ms-ceintl.vscode-language-pack-ja`）はインストール済みですが、表示言語の切り替えは自動化していないため、クライアント端末ごとに初回起動時に手動で切り替えます。
+
+1. VS Code を起動する
+2. `Ctrl+Shift+P` でコマンドパレットを開く
+3. `Configure Display Language` と入力して実行
+4. 一覧から `日本語` を選択する
+5. 表示される通知から VS Code を再起動する
 
 ## NAS への接続方法
 
@@ -464,43 +231,17 @@ common ロール（`mdns`）適用後は、各ラズパイに `<hostname>.local`
 | OS | 方法 |
 |---|---|
 | Windows | エクスプローラーに `\\<NASのIPアドレス>\nas` を入力し、上記で認証 |
-| Linux | `smbclient //<NASのIPアドレス>/nas -U sambauser` を実行しパスワードを入力 |
-smb://192.168.x.10
+| Linux（CLI） | `smbclient //<NASのIPアドレス>/nas -U sambauser` を実行しパスワードを入力 |
+| Linux（GUI） | ファイルマネージャーのアドレス欄に `smb://<NASのIPアドレス>/nas` を入力し、上記で認証 |
 
 NASのIPアドレスは拠点ごとのインベントリファイルの `[nas]` セクションを参照してください。
 
 ---
 
-## 変数リファレンス
+## 関連ドキュメント
 
-### 全ホスト共通 (`inventory/group_vars/all.yml`)
-
-```yaml
-local_user: swimmy                        # ログインユーザー
-vscode_user: swimmy                       # VS Code 拡張機能インストール対象ユーザー
-ansible_user: swimmy                      # SSH接続ユーザー
-ansible_password: swimmy                  # SSH接続パスワード
-ansible_become_password: swimmy           # sudo パスワード
-ansible_python_interpreter: /usr/bin/python3
-```
-
-### クライアント専用 (`inventory/group_vars/client.yml`)
-
-```yaml
-nas_share: nas            # 共有フォルダ名
-nas_user: sambauser       # Samba ユーザー名
-nas_pass: swimmy          # Samba パスワード
-mount_point: /mnt/nas     # クライアント側マウントポイント
-```
-
-> NASのIPアドレスは拠点ごとのインベントリファイル（`[nas]` セクション）から自動的に参照されます。
-
-### NASサーバー専用 (`inventory/group_vars/nas.yml`)
-
-```yaml
-samba_user: sambauser        # Samba アクセス用ユーザー
-samba_password: swimmy       # Samba パスワード
-share_name: nas              # 共有フォルダ名
-usb_device: /dev/sda1        # USB デバイスパス
-nas_mount: /media/swimmy/nas # USB マウントポイント
-```
+- [Ansibleとは（詳細）](docs/about-ansible.md)
+- [Ansible インストール（実行元PC）](docs/setup-controller.md)
+- [Raspberry Pi OS セットアップ（手動）](docs/setup-raspberrypi.md)
+- [トラブルシューティング](docs/troubleshooting.md)
+- [変数リファレンス](docs/variables.md)
