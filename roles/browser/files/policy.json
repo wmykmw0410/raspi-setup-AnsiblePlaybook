@@ -1,8 +1,7 @@
 {
-  "HomepageLocation": "https://www.google.com",
-  "HomepageIsNewTabPage": false,
+  "HomepageIsNewTabPage": true,
   "RestoreOnStartup": 4,
-  "RestoreOnStartupURLs": ["https://www.google.com"],
+  "RestoreOnStartupURLs": ["file:///etc/chromium/newtab.html"],
   "NewTabPageLocation": "file:///etc/chromium/newtab.html",
   "PasswordManagerEnabled": false
 }

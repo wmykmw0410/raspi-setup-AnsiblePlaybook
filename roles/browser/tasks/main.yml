@@ -1,32 +1,4 @@
 ---
-- name: Chromium managed policies ディレクトリを作成する
-  ansible.builtin.file:
-    path: /etc/chromium/policies/managed
-    state: directory
-    owner: root
-    group: root
-    mode: "0755"
-
-- name: Chromium ポリシーを配置する
-  ansible.builtin.copy:
-    src: policy.json
-    dest: /etc/chromium/policies/managed/policy.json
-    owner: root
-    group: root
-    mode: "0644"
-
-- name: 新しいタブページのショートカット HTML を配置する
-  ansible.builtin.copy:
-    src: newtab.html
-    dest: /etc/chromium/newtab.html
-    owner: root
-    group: root
-    mode: "0644"
-
-- name: ブラウザ起動時のキーリング解錠プロンプトを避けるため既存キーリングを削除する
-  ansible.builtin.file:
-    path: "/home/{{ local_user }}/.local/share/keyrings/{{ item }}"
-    state: absent
-  loop:
-    - login.keyring
-    - default.keyring
+- ansible.builtin.include_tasks: policy.yml
+- ansible.builtin.include_tasks: password_store.yml
+- ansible.builtin.include_tasks: keyring.yml

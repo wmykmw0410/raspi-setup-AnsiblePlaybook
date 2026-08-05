@@ -1,0 +1,8 @@
+---
+- name: ブラウザ起動時のキーリング解錠プロンプトを避けるため既存キーリングを削除する
+  ansible.builtin.file:
+    path: "/home/{{ local_user }}/.local/share/keyrings/{{ item }}"
+    state: absent
+  loop:
+    - login.keyring
+    - default.keyring

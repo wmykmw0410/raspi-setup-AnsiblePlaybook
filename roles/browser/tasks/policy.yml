@@ -1,0 +1,24 @@
+---
+- name: Chromium managed policies ディレクトリを作成する
+  ansible.builtin.file:
+    path: /etc/chromium/policies/managed
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Chromium ポリシーを配置する
+  ansible.builtin.copy:
+    src: policy.json
+    dest: /etc/chromium/policies/managed/policy.json
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: 新しいタブページのショートカット HTML を配置する
+  ansible.builtin.template:
+    src: newtab.html.j2
+    dest: /etc/chromium/newtab.html
+    owner: root
+    group: root
+    mode: "0644"
