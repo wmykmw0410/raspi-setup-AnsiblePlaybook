@@ -2,12 +2,59 @@
 
 Raspberry Pi をNASサーバー・クライアントとして構成する Ansible Playbook です。
 
+## Ansibleとは
+
+Ansible は、サーバーやPCなどの構成管理・自動化を行うオープンソースのツールです。
+
+- **エージェントレス**: 対象端末に専用ソフトウェアを事前インストールする必要がなく、SSHで接続できればセットアップ可能
+- **宣言的な設定（Playbook）**: 「どうやるか」ではなく「どうあるべきか」をYAML形式の Playbook に記述する
+- **冪等性**: 同じ Playbook を何度実行しても、既に設定済みの項目はスキップされ、常に同じ状態に収束する
+
+このリポジトリでは、複数拠点・複数台の Raspberry Pi（NASサーバー・クライアント）に対して、OSセットアップ後の各種インストール・設定作業を Ansible で自動化しています。手作業でのセットアップと異なり、`ansible-playbook` コマンドを実行するだけで、拠点間・端末間で同一の設定を再現できます。
+
+## サービス概要
+
+このリポジトリでは、Raspberry Pi を用いて拠点ごとに以下2種類の端末を構築します。
+
+### NASサーバー
+
+Samba によるファイル共有サーバーです。
+
+- USB ドライブ（exFAT）をマウントし、ネットワーク経由でファイル共有（`\\<NASのIPアドレス>\nas` など）を提供
+- 共有フォルダへの読み書きは Samba ユーザー（`sambauser`）で認証
+
+### クライアント（授業用PC）
+
+プログラミング学習用にセットアップされた端末です。
+
+- **ブラウザ（Chromium）**: ホームページ・新しいタブページを教材ページに固定するポリシーを配信
+- **VS Code**: 学習用拡張機能をインストール済み
+- **Minecraft Pi**: Python（`mcpi` ライブラリ）でMinecraftを操作する学習環境
+- **Python環境**: `pygame` / `flask` / `keyboard` 等の学習用ライブラリを導入
+- **NASマウント**: NASサーバーの共有フォルダを起動時に自動マウント（`/mnt/nas`）
+
+### 共通機能（NAS・クライアント共通）
+
+- 日本語ロケール（`ja_JP.UTF-8`）・日本語キーボード（`fcitx5-mozc`）設定
+- mDNS（avahi-daemon）による `<hostname>.local` 名前解決
+- sudo権限付与、apt パッケージの自動アップデート
+
 ## 前提条件
+
+### 実行元PC
+
+- Ansible インストール済み（詳細は下記「Ansible インストール（実行元PC）」参照）
+
+### クライアント用(授業用)
 
 - Raspberry Pi OS インストール済み
 - SSH 接続可能な状態
-- 実行元PCに Ansible インストール済み（`pip install ansible`）
-- NASサーバー用: USB ドライブが exFAT フォーマット済み
+
+### NAS用
+
+- Raspberry Pi OS インストール済み
+- SSH 接続可能な状態
+- USB ドライブが exFAT フォーマット済み
 
 ## ファイル構成
 
@@ -47,6 +94,96 @@ ansible/
     │   └── templates/smb.conf  # Samba 設定テンプレート
     └── nas_mount/          # クライアント: NAS マウント設定
 ```
+
+## Ansible インストール（実行元PC）
+
+Ansible を実行するPCにAnsibleをインストールします。OSごとの手順は以下の通りです。
+
+> 仮想環境（venv）の利用は任意です。他のPythonプロジェクトとパッケージを分離したい場合は、`pip install` の前に以下を実行してください（以降、`pip` / `ansible` コマンドを使うたびに `source` の実行が必要です）。
+>
+> ```bash
+> python3 -m venv ~/.venv/ansible
+> source ~/.venv/ansible/bin/activate    # Windows(WSL)は同じ、Windows(PowerShell等)は非対応のためWSL必須
+> ```
+
+### macOS
+
+1. Python のバージョンを確認します（3.9 以上が必要）。未インストールの場合は [Homebrew](https://brew.sh/) 等でインストールします。
+
+   ```bash
+   python3 --version
+   ```
+
+2. Ansible をインストールします。
+
+   ```bash
+   pip3 install --upgrade pip
+   pip3 install ansible
+   ```
+
+3. インストールを確認します。
+
+   ```bash
+   ansible --version
+   ```
+
+### Windows
+
+Ansible の実行環境は Linux/macOS 前提のため、Windows では **WSL（Windows Subsystem for Linux）** を利用します。
+
+1. PowerShell を管理者権限で開き、WSL と Ubuntu をインストールします。
+
+   ```powershell
+   wsl --install
+   ```
+
+   インストール後、PCを再起動しUbuntuの初回セットアップ（ユーザー名・パスワード設定）を行います。
+
+2. WSL（Ubuntu）のターミナルを開き、パッケージを更新して Python / pip をインストールします。
+
+   ```bash
+   sudo apt update
+   sudo apt install -y python3 python3-pip
+   ```
+
+3. Ansible をインストールします。
+
+   ```bash
+   pip3 install --upgrade pip
+   pip3 install ansible
+   ```
+
+4. インストールを確認します。
+
+   ```bash
+   ansible --version
+   ```
+
+> 以降の `ansible` / `ansible-playbook` コマンドはすべて WSL（Ubuntu）のターミナル上で実行してください。
+
+### Linux（Ubuntu/Debian系）
+
+1. パッケージを更新して Python / pip をインストールします。
+
+   ```bash
+   sudo apt update
+   sudo apt install -y python3 python3-pip
+   ```
+
+2. Ansible をインストールします。
+
+   ```bash
+   pip3 install --upgrade pip
+   pip3 install ansible
+   ```
+
+3. インストールを確認します。
+
+   ```bash
+   ansible --version
+   ```
+
+バージョン情報が表示されればインストール完了です。
 
 ## Raspberry Pi OS セットアップ（手動）
 
