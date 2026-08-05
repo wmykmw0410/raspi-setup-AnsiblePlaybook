@@ -1,0 +1,48 @@
+---
+- name: VS Code 設定ディレクトリを作成する
+  ansible.builtin.file:
+    path: "/home/{{ vscode_user }}/.config/Code"
+    state: directory
+    owner: "{{ vscode_user }}"
+    group: "{{ vscode_user }}"
+    mode: "0755"
+
+- name: VS Code ユーザー設定ディレクトリを作成する
+  ansible.builtin.file:
+    path: "/home/{{ vscode_user }}/.config/Code/User"
+    state: directory
+    owner: "{{ vscode_user }}"
+    group: "{{ vscode_user }}"
+    mode: "0755"
+
+- name: settings.json にエクスプローラー設定を追加する
+  ansible.builtin.copy:
+    dest: "/home/{{ vscode_user }}/.config/Code/User/settings.json"
+    owner: "{{ vscode_user }}"
+    group: "{{ vscode_user }}"
+    mode: "0644"
+    content: |
+      {
+          "files.exclude": {
+              "**/._*": true
+          }
+      }
+
+- name: keybindings.json に Python 実行ショートカットを追加する
+  ansible.builtin.copy:
+    dest: "/home/{{ vscode_user }}/.config/Code/User/keybindings.json"
+    owner: "{{ vscode_user }}"
+    group: "{{ vscode_user }}"
+    mode: "0644"
+    content: |
+      [
+          {
+              "key": "ctrl+f5",
+              "command": "-workbench.action.debug.run"
+          },
+          {
+              "key": "f5",
+              "command": "python.execInTerminal",
+              "when": "editorTextFocus && editorLangId == 'python'"
+          }
+      ]

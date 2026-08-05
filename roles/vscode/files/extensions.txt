@@ -30,3 +30,9 @@ ecmel.vscode-html-css
 
 # VS Code 日本語化
 ms-ceintl.vscode-language-pack-ja
+
+# Gitコミット履歴・グラフ表示
+mhutchie.git-graph
+
+# GitHub Pull Request・Issue連携
+github.vscode-pull-request-github
