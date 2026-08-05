@@ -9,6 +9,8 @@
     - keyboard
     - browser
     - python_env
+    - git
+    - screenshot
     - vscode
     - minecraft
     - mdns
