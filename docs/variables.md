@@ -42,8 +42,6 @@ nas_mount: /media/swimmy/nas # USB マウントポイント
 拠点ごとに異なる値を持つ変数です。`playbooks/common.yml` の `pre_tasks` が、実行時のインベントリファイル名（`mitaka.ini` → `mitaka` など）から対応するファイルを自動的に読み込みます。
 
 ```yaml
-wifi_ssid: "Swimmy_Shinagawa-Wi-Fi_5G"  # credential.txt に記載するWi-Fi SSID
-wifi_password: <Vault化 または 平文>     # credential.txt に記載するWi-Fiパスワード
 googledrive_password: <Vault化 または 平文>  # credential.txt に記載するGoogleドライブパスワード
 
 extra_shortcuts:                        # ブラウザ新しいタブページに表示する拠点固有ショートカット

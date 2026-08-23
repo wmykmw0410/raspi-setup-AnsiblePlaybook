@@ -28,7 +28,7 @@ Samba によるファイル共有サーバーです。
 - **Minecraft Pi**: Python（`mcpi` ライブラリ）でMinecraftを操作する学習環境
 - **Python環境**: `pygame` / `flask` / `keyboard` 等の学習用ライブラリを導入
 - **NASマウント**: NASサーバーの共有フォルダを起動時に自動マウント（`/mnt/nas`）
-- **credential.txt**: `~/Documents` に、rootパスワード・Wi-Fi情報・Googleドライブパスワードを記載したファイルを配置（拠点固有の値は `inventory/site_vars/<拠点>.yml` で設定。詳細は[変数リファレンス](docs/variables.md)）
+- **credential.txt**: `~/Documents` に、rootパスワード・Googleドライブパスワードを記載したファイルを配置（拠点固有の値は `inventory/site_vars/<拠点>.yml` で設定。詳細は[変数リファレンス](docs/variables.md)）
 
 ### 共通機能（NAS・クライアント共通）
 
@@ -73,7 +73,7 @@ ansible/
 │   │   ├── client.yml      # クライアント専用変数
 │   │   └── nas.yml         # NASサーバー専用変数
 │   └── site_vars/
-│       ├── shinagawa.yml   # 品川拠点固有の変数（Wi-Fi・GoogleDriveパスワード等）
+│       ├── shinagawa.yml   # 品川拠点固有の変数（GoogleDriveパスワード等）
 │       ├── mitaka.yml      # 三鷹拠点固有の変数
 │       ├── kashiwa.yml     # 柏拠点固有の変数
 │       └── takadanobaba.yml # 高田馬場拠点固有の変数

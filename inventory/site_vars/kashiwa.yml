@@ -1,6 +1,4 @@
 # credential.txt に記載する柏拠点固有の情報
-# wifi_password / googledrive_password は ansible-vault encrypt_string で暗号化してから
+# googledrive_password は ansible-vault encrypt_string で暗号化してから
 # 平文の TODO と置き換えてください（例: docs/setup-raspberrypi.md や README.md の Vault化手順を参照）
-wifi_ssid: "TODO"
-wifi_password: "TODO"
 googledrive_password: "TODO"

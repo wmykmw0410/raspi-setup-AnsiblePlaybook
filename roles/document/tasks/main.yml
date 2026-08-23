@@ -1,5 +1,5 @@
 ---
-# site_name・拠点別変数（wifi_ssid 等）は common.yml の pre_tasks で読み込み済み
+# site_name・拠点別変数（googledrive_password 等）は common.yml の pre_tasks で読み込み済み
 - name: Documents ディレクトリを作成する
   ansible.builtin.file:
     path: "/home/{{ local_user }}/Documents"
