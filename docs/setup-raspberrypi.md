@@ -105,8 +105,10 @@ raspi01 ansible_host=192.168.50.23 static_ip=192.168.50.11
 
 `inventory/<拠点>.ini` の `[client]`・`[nas]` セクションに各ホストの `ansible_host`（DHCPのIPアドレス）・`static_ip`（固定化したいIPアドレス）が設定済みであれば、以下を実行して固定化できます。
 
+固定化しない場合の手順は [固定化しない場合](#固定化しない場合) を参照してください。
+
 ```bash
-ansible-playbook -i inventory/<拠点>.ini playbooks/static_ip.yml
+ansible-playbook -i inventory/<拠点>.ini playbooks/static_ip.yml --ask-vault-pass
 ```
 
 実行が成功すると、`inventory/<拠点>.ini` の該当ホストの `ansible_host` はDHCPのIPアドレスから `<hostname>.local` へ自動的に書き換わります（手動での編集は不要です）。
@@ -171,6 +173,14 @@ sudo nmcli con up "有線接続 1"
 ```bash
 ip addr show
 ```
+
+### 固定化しない場合
+
+IPアドレスを固定化せず、DHCPで割り振られたIPアドレスのまま運用することもできます。その場合は以下の点に注意してください。
+
+- `inventory/<拠点>.ini` の `ansible_host` は、手順2で確認したDHCPのIPアドレスのままにしておきます（`static_ip` は固定化を行わなくても記載しておきます。詳細は [README](../README.md#1-接続先を編集する) 参照）。
+- ラズパイを再起動するとDHCPによりIPアドレスが変わる場合があります。その都度「[2. IPアドレスを確認する](#2-ipアドレスを確認する)」の手順でIPアドレスを再確認し、`ansible_host` を実際のIPアドレスに書き換えてください。
+- IPアドレスの変動を避けたい場合は、ラズパイ側を固定化する代わりに、ルーターのDHCP予約機能（MACアドレスに対して常に同じIPアドレスを割り当てる機能）を利用する方法もあります。設定方法はお使いのルーターのマニュアルを参照してください。DHCP予約したIPアドレスを `ansible_host`・`static_ip` の両方に記載しておくと、以降はIPアドレスの変化を気にする必要がなくなります。
 
 ## 4. SSH 接続を確認する
 

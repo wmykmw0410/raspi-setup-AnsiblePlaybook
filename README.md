@@ -202,6 +202,8 @@ ansible-playbook -i inventory/takadanobaba.ini playbooks/static_ip.yml --ask-vau
 
 ラズパイを作り直した場合はSSHホスト鍵が変わり`known_hosts`との不一致警告で接続できなくなることがあります。その場合は [トラブルシューティング](docs/troubleshooting.md) を参照して対処してから実行してください。
 
+IPアドレスを固定化せずDHCPのまま運用することもできます。その場合の注意点は [Raspberry Pi OS セットアップ手順の「固定化しない場合」](docs/setup-raspberrypi.md#固定化しない場合) を参照してください。
+
 `ansible-playbook` は `-i` で指定したインベントリファイルに対して、`playbooks/` 配下のPlaybookを実行します。`nas.yml` は `hosts: nas`（NASサーバー）、`client.yml` は `hosts: client`（クライアント端末）を対象に、それぞれ `common.yml`（全ホスト共通ロール）を取り込んだ上で拠点固有のロールを適用し、最後に自動再起動します。
 
 ```bash

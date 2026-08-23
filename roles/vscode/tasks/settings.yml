@@ -26,6 +26,44 @@
           "workbench.colorTheme": "Visual Studio Dark",
           "files.exclude": {
               "**/._*": true
+          },
+          "[html]": {
+              "editor.defaultFormatter": "esbenp.prettier-vscode",
+              "editor.formatOnSave": true,
+              "editor.tabSize": 2,
+              "editor.insertSpaces": true
+          },
+          "[css]": {
+              "editor.defaultFormatter": "esbenp.prettier-vscode",
+              "editor.formatOnSave": true,
+              "editor.tabSize": 2,
+              "editor.insertSpaces": true
+          },
+          "[javascript]": {
+              "editor.defaultFormatter": "esbenp.prettier-vscode",
+              "editor.formatOnSave": true,
+              "editor.tabSize": 2,
+              "editor.insertSpaces": true
+          },
+          "[sql]": {
+              "editor.defaultFormatter": "dorzey.vscode-sqlfluff",
+              "editor.formatOnSave": true,
+              "editor.tabSize": 4,
+              "editor.insertSpaces": true
+          },
+          "[terraform]": {
+              "editor.defaultFormatter": "hashicorp.terraform",
+              "editor.formatOnSave": true
+          },
+          "[yaml]": {
+              "editor.defaultFormatter": "esbenp.prettier-vscode",
+              "editor.formatOnSave": true,
+              "editor.tabSize": 2,
+              "editor.insertSpaces": true
+          },
+          "[python]": {
+              "editor.tabSize": 4,
+              "editor.insertSpaces": true
           }
       }
 
