@@ -1,0 +1,13 @@
+# credential.txt に記載する高田馬場拠点固有の情報
+# wifi_password / googledrive_password は ansible-vault encrypt_string で暗号化してから
+# 平文の TODO と置き換えてください（例: docs/setup-raspberrypi.md や README.md の Vault化手順を参照）
+wifi_ssid: "TODO"
+wifi_password: "AsakusaChuboo"
+googledrive_password: "AsakusaChuboo"
+
+# ブラウザ新しいタブページに表示する拠点固有ショートカット（browserロールで使用）
+extra_shortcuts:
+  - label: 座席表
+    url: "https://docs.google.com/spreadsheets/d/1ITKRhi-BYjHgpEWjjM22DY8SNNotAkpKeJLVJWUxbQg/edit?gid=1511268071"
+  - label: GoogleDrive
+    url: "https://drive.google.com/drive/u/2/folders/1UALZtx0GTlEN2v1ZbxfpSjgcU7Ak4M1w"

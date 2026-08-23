@@ -4,13 +4,29 @@
     vscode_extensions: "{{ lookup('file', role_path ~ '/files/extensions.txt').splitlines() | reject('match', '^#') | reject('equalto', '') | list }}"
 
 - name: インストール済み拡張機能を取得する
+  become: true
   become_user: "{{ vscode_user }}"
   ansible.builtin.command: code --list-extensions
   register: installed_extensions
   changed_when: false
 
 - name: VSCode 拡張機能インストール
+  become: true
   become_user: "{{ vscode_user }}"
   ansible.builtin.command: code --install-extension {{ item }}
   loop: "{{ vscode_extensions }}"
   when: item not in installed_extensions.stdout_lines
+  register: extension_install
+  retries: 3
+  delay: 5
+  until: extension_install is succeeded
+  ignore_errors: true
+
+- name: 拡張機能のインストール失敗を報告する
+  ansible.builtin.fail:
+    msg: >-
+      以下の拡張機能のインストールに失敗しました:
+      {{ extension_install.results | selectattr('failed', 'defined') | selectattr('failed') | map(attribute='item') | list }}
+  when:
+    - extension_install.results is defined
+    - extension_install.results | selectattr('failed', 'defined') | selectattr('failed') | list | length > 0

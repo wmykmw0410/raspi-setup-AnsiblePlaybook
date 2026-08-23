@@ -9,6 +9,7 @@
     state: present
 
 - name: install Pi-Apps
+  become: true
   become_user: "{{ local_user }}"
   ansible.builtin.shell: wget -qO- https://raw.githubusercontent.com/Botspot/pi-apps/master/install | bash
   args:
@@ -20,6 +21,7 @@
     state: absent
 
 - name: install Minecraft Pi
+  become: true
   become_user: "{{ local_user }}"
   ansible.builtin.command: "/home/{{ local_user }}/pi-apps/manage install \"Minecraft Pi (Modded)\""
 

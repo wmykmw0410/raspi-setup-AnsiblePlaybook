@@ -3,14 +3,33 @@
   hosts: all
   become: true
 
+  pre_tasks:
+    - name: 拠点名を取得する
+      ansible.builtin.set_fact:
+        site_name: "{{ (inventory_file | basename | splitext)[0] }}"
+
+    - name: 拠点別の変数を読み込む
+      ansible.builtin.include_vars:
+        file: "{{ inventory_dir }}/site_vars/{{ site_name }}.yml"
+
   roles:
-    - base
-    - locale
-    - keyboard
-    - browser
-    - python_env
-    - git
-    - screenshot
-    - vscode
-    - minecraft
-    - mdns
+    - role: base
+      tags: base
+    - role: locale
+      tags: locale
+    - role: keyboard
+      tags: keyboard
+    - role: browser
+      tags: browser
+    - role: python_env
+      tags: python_env
+    - role: git
+      tags: git
+    - role: screenshot
+      tags: screenshot
+    - role: vscode
+      tags: vscode
+    - role: minecraft
+      tags: minecraft
+    - role: mdns
+      tags: mdns

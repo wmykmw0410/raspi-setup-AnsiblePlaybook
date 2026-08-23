@@ -1,0 +1,57 @@
+# 有効化するには、以下の行頭の "# " を全て削除してください。
+#
+# name: Lint
+#
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+#
+# jobs:
+#   lint:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#
+#       - uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.11"
+#
+#       - name: Ansible・lintツールをインストール
+#         run: pip install ansible ansible-lint yamllint
+#
+#       - name: 全拠点×全playbookの構文チェック
+#         run: |
+#           set -e
+#           for inv in mitaka kashiwa shinagawa takadanobaba; do
+#             for pb in playbooks/common.yml playbooks/client.yml playbooks/nas.yml playbooks/static_ip.yml; do
+#               ansible-playbook -i "inventory/${inv}.ini" "$pb" --syntax-check
+#             done
+#           done
+#
+#       - name: ansible-lint
+#         run: ansible-lint
+#
+#       - name: yamllint
+#         run: |
+#           yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, comments-indentation: disable, indentation: {spaces: consistent}}}" .
+#
+#   molecule:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         role: [base, git, screenshot, python_env, document]
+#     steps:
+#       - uses: actions/checkout@v4
+#
+#       - uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.11"
+#
+#       - name: Molecule・Ansibleをインストール
+#         run: pip install ansible molecule molecule-plugins[docker] docker
+#
+#       - name: molecule test（${{ matrix.role }}）
+#         working-directory: roles/${{ matrix.role }}
+#         run: molecule test

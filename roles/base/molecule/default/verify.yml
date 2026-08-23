@@ -1,0 +1,16 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: swimmy が sudo グループに属していることを確認する
+      ansible.builtin.command: id -nG swimmy
+      register: groups_result
+      changed_when: false
+      failed_when: "'sudo' not in groups_result.stdout"
+
+    - name: cups-browsed が無効化されていることを確認する
+      ansible.builtin.command: systemctl is-enabled cups-browsed
+      register: cups_status
+      changed_when: false
+      failed_when: "'masked' not in cups_status.stdout"

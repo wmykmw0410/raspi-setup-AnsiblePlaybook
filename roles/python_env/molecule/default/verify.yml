@@ -1,0 +1,16 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: flask がインストールされていることを確認する
+      ansible.builtin.command: python3 -c "import flask; print(flask.__version__)"
+      register: flask_version
+      changed_when: false
+      failed_when: flask_version.stdout != "2.3.3"
+
+    - name: pyjwt が指定バージョンで上書きインストールされていることを確認する
+      ansible.builtin.command: python3 -c "import jwt; print(jwt.__version__)"
+      register: pyjwt_version
+      changed_when: false
+      failed_when: pyjwt_version.stdout != "2.12.1"

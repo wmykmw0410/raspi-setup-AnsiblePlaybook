@@ -19,6 +19,7 @@
     dest: /etc/apt/sources.list.d/vscode.list
     content: |
       deb [arch=arm64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main
+    mode: "0644"
 
 - name: apt update
   ansible.builtin.apt:

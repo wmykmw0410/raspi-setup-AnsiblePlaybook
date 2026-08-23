@@ -13,5 +13,6 @@
 - name: fstab に NAS マウント設定追加
   ansible.builtin.lineinfile:
     path: /etc/fstab
-    line: "//{{ groups['nas'][0] }}/{{ nas_share }}   {{ mount_point }}   cifs   username={{ nas_user }},password={{ nas_pass }},iocharset=utf8,uid=1000,gid=1000,nofail,_netdev   0   0"
+    line: "//{{ groups['nas'][0] }}.local/{{ nas_share }}   {{ mount_point }}   cifs   username={{ nas_user }},password={{ nas_pass }},iocharset=utf8,uid=1000,gid=1000,nofail,_netdev   0   0"
     create: true
+    mode: "0644"

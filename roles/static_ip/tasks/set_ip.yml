@@ -1,0 +1,65 @@
+---
+- name: iputils-arping をインストールする
+  ansible.builtin.apt:
+    name: iputils-arping
+    state: present
+  when: static_ip is defined
+
+- name: 固定IPアドレスが他機器で使用されていないか確認する
+  ansible.builtin.command: arping -D -c 2 -I eth0 {{ static_ip }}
+  register: arping_result
+  changed_when: false
+  failed_when: false
+  when:
+    - static_ip is defined
+    - static_ip not in ansible_all_ipv4_addresses
+
+- name: 固定IPアドレスの重複を検知したら処理を中断する
+  ansible.builtin.fail:
+    msg: >-
+      固定IPアドレス {{ static_ip }} は既に他の機器
+      (MACアドレス: {{ arping_result.stdout | regex_search('\[([0-9A-Fa-f:]+)\]', '\1') | default([], true) | first | default('不明', true) }})
+      で使用されています。別のIPアドレスを指定してください。
+  when:
+    - static_ip is defined
+    - arping_result is not skipped
+    - arping_result.rc == 1
+
+- name: eth0 に紐づく接続名を取得する
+  ansible.builtin.command: nmcli -t -g GENERAL.CONNECTION dev show eth0
+  register: eth0_connection
+  changed_when: false
+  when: static_ip is defined
+
+- name: 固定IPアドレスを設定する
+  community.general.nmcli:
+    conn_name: "{{ eth0_connection.stdout }}"
+    ifname: eth0
+    type: ethernet
+    method4: manual
+    ip4: "{{ static_ip }}/24"
+    gw4: "{{ static_ip | ansible.builtin.regex_replace('\\.[0-9]+$', '.1') }}"
+    dns4: "{{ dns_servers }}"
+    state: present
+  register: nmcli_result
+  when: static_ip is defined
+
+- name: 固定IP設定を反映する
+  ansible.builtin.command: nmcli con up "{{ eth0_connection.stdout }}"
+  when:
+    - static_ip is defined
+    - nmcli_result is changed
+  async: 3
+  poll: 0
+
+- name: 固定IP宛ての以降の接続用ホストを登録する
+  ansible.builtin.add_host:
+    name: "{{ inventory_hostname }}_static_ip_check"
+    groups: static_ip_check
+    ansible_host: "{{ static_ip }}"
+    ansible_user: "{{ ansible_user }}"
+    ansible_password: "{{ ansible_password }}"
+    ansible_python_interpreter: "{{ ansible_python_interpreter }}"
+    original_hostname: "{{ inventory_hostname }}"
+    original_inventory_file: "{{ inventory_file }}"
+  when: static_ip is defined

@@ -10,6 +10,7 @@
 
 - name: 入力メソッドをfcitx5に設定
   ansible.builtin.command: im-config -n fcitx5
+  changed_when: false
 
 - name: IM環境変数設定
   ansible.builtin.copy:

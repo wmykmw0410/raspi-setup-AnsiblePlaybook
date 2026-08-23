@@ -1,0 +1,17 @@
+---
+# site_name・拠点別変数（wifi_ssid 等）は common.yml の pre_tasks で読み込み済み
+- name: Documents ディレクトリを作成する
+  ansible.builtin.file:
+    path: "/home/{{ local_user }}/Documents"
+    state: directory
+    owner: "{{ local_user }}"
+    group: "{{ local_user }}"
+    mode: "0755"
+
+- name: credential.txt を配置する
+  ansible.builtin.template:
+    src: credential.txt.j2
+    dest: "/home/{{ local_user }}/Documents/credential.txt"
+    owner: "{{ local_user }}"
+    group: "{{ local_user }}"
+    mode: "0600"

@@ -1,0 +1,13 @@
+# credential.txt に記載する品川拠点固有の情報
+# wifi_password / googledrive_password は ansible-vault encrypt_string で暗号化してから
+# 平文の TODO と置き換えてください（例: docs/setup-raspberrypi.md や README.md の Vault化手順を参照）
+wifi_ssid: "Swimmy_Shinagawa-Wi-Fi_5G"
+wifi_password: "SAI_swimmy_888"
+googledrive_password: "Et5Kn2ex"
+
+# ブラウザ新しいタブページに表示する拠点固有ショートカット（browserロールで使用）
+extra_shortcuts:
+  - label: 座席表
+    url: "https://docs.google.com/spreadsheets/d/1M-tg2FF04A0b2sRSOtZKuy1IN5thuQFrXBAbssMLL1w/edit?gid=1809174813"
+  - label: GoogleDrive
+    url: "https://drive.google.com/drive/u/1/home"

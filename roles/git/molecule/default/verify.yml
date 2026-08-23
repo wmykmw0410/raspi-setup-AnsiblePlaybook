@@ -1,0 +1,10 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: git がインストールされていることを確認する
+      ansible.builtin.command: git --version
+      register: git_version
+      changed_when: false
+      failed_when: git_version.rc != 0

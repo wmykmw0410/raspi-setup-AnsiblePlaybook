@@ -1,0 +1,10 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: gnome-screenshot がインストールされていることを確認する
+      ansible.builtin.command: dpkg -s gnome-screenshot
+      register: pkg_status
+      changed_when: false
+      failed_when: pkg_status.rc != 0

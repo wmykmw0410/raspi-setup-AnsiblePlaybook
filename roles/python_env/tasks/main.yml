@@ -11,7 +11,32 @@
   ansible.builtin.pip:
     name:
       - pygame
-      - flask
+      - flask==2.3.3
+      - flask-jwt-extended==4.5.2
+      - flask-login==0.6.3
+      - flask-migrate==4.0.4
+      - flask-sqlalchemy==3.0.3
+      - flask-wtf==1.2.2
+      - werkzeug==3.1.5
+      - jinja2==3.1.6
+      - itsdangerous==2.2.0
+      - click==8.3.1
+      - blinker==1.9.0
+      - markupsafe==3.0.3
+      - sqlalchemy==2.0.48
+      - alembic==1.18.4
+      - mako==1.3.10
+      - wtforms==3.0.1
+      - greenlet==3.4.0
       - keyboard
     state: present
     extra_args: --break-system-packages
+
+# PyJWT は Raspberry Pi OS に apt 経由（RECORDファイルなし）で入っているため、
+# 通常のpipアンインストール処理ができず失敗する。--ignore-installed でファイルを直接上書きする
+- name: pyjwt をインストールする
+  ansible.builtin.pip:
+    name:
+      - pyjwt==2.12.1
+    state: present
+    extra_args: --break-system-packages --ignore-installed

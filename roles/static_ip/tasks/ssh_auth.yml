@@ -1,0 +1,11 @@
+---
+- name: ID・パスワードでSSH接続する
+  ansible.builtin.ping:
+
+- name: インベントリファイルの ansible_host を <hostname>.local に書き換える
+  ansible.builtin.replace:
+    path: "{{ original_inventory_file }}"
+    regexp: '^({{ original_hostname }} ansible_host=)\S+'
+    replace: '\g<1>{{ original_hostname }}.local'
+  delegate_to: localhost
+  become: false

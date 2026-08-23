@@ -36,3 +36,21 @@ mhutchie.git-graph
 
 # GitHub Pull Request・Issue連携
 github.vscode-pull-request-github
+
+# SQLite データベースの閲覧・編集
+alexcvzz.vscode-sqlite
+
+# SQLite データベースの閲覧（テーブルビューア）
+qwtel.sqlite-viewer
+
+# SQL実行・DB接続
+mtxr.sqltools
+
+# SQL整形
+adpyke.vscode-sql-formatter
+
+# JavaScript スニペット
+xabikos.javascriptsnippets
+
+# HTML内のCSSクラス名補完
+zignd.html-css-class-completion

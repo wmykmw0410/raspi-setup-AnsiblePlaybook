@@ -1,0 +1,12 @@
+---
+- name: eth0 のIPアドレスを取得する
+  ansible.builtin.command: ip -4 -o addr show eth0
+  register: eth0_addr
+  changed_when: false
+
+- name: 固定IPアドレスが適用されていることを確認する
+  ansible.builtin.assert:
+    that:
+      - ansible_host in eth0_addr.stdout
+    fail_msg: "固定IPアドレス {{ ansible_host }} が eth0 に設定されていません: {{ eth0_addr.stdout }}"
+    success_msg: "固定IPアドレス {{ ansible_host }} が正しく設定されています"

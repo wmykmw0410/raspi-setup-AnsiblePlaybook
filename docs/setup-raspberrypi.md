@@ -95,7 +95,31 @@ ip addr show
 
 または、ルーターの管理画面から確認します。
 
-## 3. IPアドレスを固定化する(GUI/CUIのどちらかを実施)
+確認したIPアドレスを `inventory/<拠点>.ini` の該当ホストの `ansible_host` に記載します（`static_ip` は固定化したい最終的なIPアドレスなので、この時点のDHCPのIPアドレスと一致するとは限りません。詳細は [README](../README.md#1-接続先を編集する) 参照）。
+
+```ini
+raspi01 ansible_host=192.168.50.23 static_ip=192.168.50.11
+```
+
+## 3. IPアドレスを固定化する
+
+`inventory/<拠点>.ini` の `[client]`・`[nas]` セクションに各ホストの `ansible_host`（DHCPのIPアドレス）・`static_ip`（固定化したいIPアドレス）が設定済みであれば、以下を実行して固定化できます。
+
+```bash
+ansible-playbook -i inventory/<拠点>.ini playbooks/static_ip.yml
+```
+
+実行が成功すると、`inventory/<拠点>.ini` の該当ホストの `ansible_host` はDHCPのIPアドレスから `<hostname>.local` へ自動的に書き換わります（手動での編集は不要です）。
+
+```ini
+; 変更前
+raspi01 ansible_host=192.168.50.23 static_ip=192.168.50.11
+; 変更後（Playbookが自動で書き換える）
+raspi01 ansible_host=raspi01.local static_ip=192.168.50.11
+```
+
+このコマンドが使えない場合は、GUI/CLIのいずれかで手動設定してください。
+
 ### GUI
 
 1. タスクバー右上のネットワークアイコンを右クリック →「Edit Connections...」を選択
@@ -138,7 +162,7 @@ sudo nmcli con mod "有線接続 1" \
   ipv4.method manual \
   ipv4.addresses 192.168.0.13/24 \
   ipv4.gateway 192.168.0.1 \
-  ipv4.dns "8.8.8.8 8.8.4.4"
+  ipv4.dns "8.8.8.8"
 sudo nmcli con up "有線接続 1"
 ```
 
@@ -158,7 +182,7 @@ ssh swimmy@<IPアドレス>
 
 > ラズパイを作り直した（SDカードを焼き直した）場合にSSH接続できない場合は、[トラブルシューティング](./troubleshooting.md#ssh接続時にremote-host-identification-has-changedと出る) を参照してください。
 
-このリポジトリの `ansible.cfg` では `host_key_checking = False` によりAnsible自体はホストキー不一致でも実行できますが、疎通確認・パスワード認証の動作確認を兼ねて、`ansible-playbook` の前に一度手動SSHで接続できることを確認してください。
+`ansible.cfg` の `host_key_checking = False` は「未知のホスト」を自動承認する設定であり、ホストキーが変化したホストへの接続はブロックされたままです（詳細は[トラブルシューティング](./troubleshooting.md#ssh接続時にremote-host-identification-has-changedと出る)参照）。疎通確認・パスワード認証の動作確認を兼ねて、`ansible-playbook` の前に必ず一度手動SSHで接続できることを確認してください。
 
 ## 5. （NASサーバーのみ）USB デバイスパスを確認する
 

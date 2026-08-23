@@ -13,6 +13,8 @@
 
 - name: locale生成
   ansible.builtin.command: locale-gen
+  changed_when: false
 
 - name: デフォルトlocale設定
   ansible.builtin.command: update-locale LANG=ja_JP.UTF-8
+  changed_when: false
