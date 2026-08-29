@@ -2,6 +2,29 @@
 
 Raspberry Pi をNASサーバー・クライアントとして構成する Ansible Playbook です。
 
+## 目次
+
+- [Ansibleとは](#ansibleとは)
+- [サービス概要](#サービス概要)
+  - [NASサーバー](#nasサーバー)
+  - [クライアント（授業用PC）](#クライアント授業用-pc)
+  - [共通機能（NAS・クライアント共通）](#共通機能nasクライアント共通)
+- [前提条件](#前提条件)
+  - [実行元PC](#実行元-pc)
+  - [クライアント用(授業用)](#クライアント用-授業用)
+  - [NAS用](#nas用)
+- [ファイル構成](#ファイル構成)
+- [Ansible セットアップ手順](#ansible-セットアップ手順)
+  - [1. 接続先を編集する](#1-接続先を編集する)
+  - [2. 疎通確認](#2-疎通確認)
+- [Playbook の実行](#playbook-の実行)
+  - [固定IPアドレスの設定（初回のみ）](#固定ipアドレスの設定初回のみ)
+  - [タグを指定した実行](#タグを指定した実行)
+- [VS Code の日本語化（クライアントのみ・手動）](#vs-code-の日本語化クライアントのみ手動)
+- [Googleドライブの自動ログイン設定（クライアントのみ・手動）](#googleドライブの自動ログイン設定クライアントのみ手動)
+- [NAS への接続方法](#nas-への接続方法)
+- [関連ドキュメント](#関連ドキュメント)
+
 ## Ansibleとは
 
 Ansible は、サーバーやPCなどの構成管理・自動化を行うオープンソースのツールです。エージェントレスかつ宣言的な設定（Playbook）、冪等性が特徴で、`ansible-playbook` コマンドを実行するだけで拠点間・端末間で同一の設定を再現できます。基本用語や仕組みの詳細は [Ansibleとは（詳細）](docs/about-ansible.md) を参照してください。
@@ -274,6 +297,48 @@ common ロール（`mdns`）適用後は、各ラズパイに `<hostname>.local`
 3. `Configure Display Language` と入力して実行
 4. 一覧から `日本語` を選択する
 5. 表示される通知から VS Code を再起動する
+
+## Googleドライブの自動ログイン設定（クライアントのみ・手動）
+
+`browser` ロールで Chromium のインストールと、起動時に Googleドライブを自動で開く labwc の autostart 設定までは自動化していますが、Googleアカウントへのログイン自体はAnsible化できないため、クライアント端末ごとに初回のみ手動で設定します。手順は各クライアントの `~/Documents/credential.txt`（テンプレート: [roles/document/templates/credential.txt.j2](roles/document/templates/credential.txt.j2)）にも記載されています。
+
+1. Chromiumのバージョン確認
+
+   ```bash
+   chromium --version
+   ```
+
+2. 通常タブでGoogleにログインする（同期機能は使わない）
+
+   ```bash
+   chromium --user-data-dir=/home/swimmy/.config/chromium https://accounts.google.com
+   ```
+
+   ここで手動でGoogleアカウントにログインする。開いたログイン画面でメールアドレス・パスワード（2段階認証を設定している場合はその確認も）の入力を求められるため、その場で入力する。入力するパスワードはクライアント端末上の `~/Documents/credential.txt` の `googledrive password` 欄に記載されている（値の元は `inventory/site_vars/<拠点>.yml` の `googledrive_password`）。
+   > 注意: プロフィールアイコンからの「ログイン（同期）」は404エラーになるため使わない。
+   > Googleのログイン画面はAnsibleや起動オプションからパスワードを渡す仕組みがなく、自動化するとGoogle側の不正ログイン検知でブロックされるため、この手順は必ず人が手動でパスワードを入力する。
+
+3. ログイン情報が保存されたか確認する
+
+   ```bash
+   ls -la ~/.config/chromium/Default/ | grep -E "Cookies|Login Data"
+   ```
+
+   `Cookies` / `Login Data` にサイズが入っていればOK。
+
+4. ファイルシステムが書き込み可能か確認する
+
+   ```bash
+   mount | grep " / "
+   ```
+
+   `rw,` であることを確認する（`ro,` だと再起動で消える）。
+
+5. 再起動してセッション維持を確認する
+
+   ```bash
+   sudo reboot
+   ```
 
 ## NAS への接続方法
 
