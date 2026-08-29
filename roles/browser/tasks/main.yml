@@ -1,4 +1,12 @@
 ---
-- ansible.builtin.include_tasks: policy.yml
-- ansible.builtin.include_tasks: password_store.yml
-- ansible.builtin.include_tasks: keyring.yml
+- name: ポリシー設定を読み込む
+  ansible.builtin.include_tasks: policy.yml
+
+- name: パスワードストア設定を読み込む
+  ansible.builtin.include_tasks: password_store.yml
+
+- name: キーリング設定を読み込む
+  ansible.builtin.include_tasks: keyring.yml
+
+- name: Labwc の autostart 設定を読み込む
+  ansible.builtin.include_tasks: labwc_autostart.yml
