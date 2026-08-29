@@ -1,4 +1,9 @@
 ---
-- ansible.builtin.include_tasks: install.yml
-- ansible.builtin.include_tasks: extensions.yml
-- ansible.builtin.include_tasks: settings.yml
+- name: VS Code インストール設定を読み込む
+  ansible.builtin.include_tasks: install.yml
+
+- name: VS Code 拡張機能設定を読み込む
+  ansible.builtin.include_tasks: extensions.yml
+
+- name: VS Code ユーザー設定を読み込む
+  ansible.builtin.include_tasks: settings.yml

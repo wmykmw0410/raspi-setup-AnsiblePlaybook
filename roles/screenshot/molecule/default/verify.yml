@@ -5,6 +5,6 @@
   tasks:
     - name: gnome-screenshot がインストールされていることを確認する
       ansible.builtin.command: dpkg -s gnome-screenshot
-      register: pkg_status
+      register: screenshot_pkg_status
       changed_when: false
-      failed_when: pkg_status.rc != 0
+      failed_when: screenshot_pkg_status.rc != 0

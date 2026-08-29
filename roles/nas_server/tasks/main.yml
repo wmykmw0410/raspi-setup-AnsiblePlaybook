@@ -1,6 +1,20 @@
 ---
-- ansible.builtin.include_tasks: ansible.yml
-- ansible.builtin.include_tasks: usb_mount.yml
-- ansible.builtin.include_tasks: samba_install.yml
-- ansible.builtin.include_tasks: samba_user.yml
-- ansible.builtin.include_tasks: samba_config.yml
+- name: Ansible インストール設定を読み込む
+  ansible.builtin.include_tasks: ansible.yml
+  tags: ansible_install
+
+- name: USB マウント設定を読み込む
+  ansible.builtin.include_tasks: usb_mount.yml
+  tags: usb_mount
+
+- name: Samba インストール設定を読み込む
+  ansible.builtin.include_tasks: samba_install.yml
+  tags: samba_install
+
+- name: Samba ユーザー設定を読み込む
+  ansible.builtin.include_tasks: samba_user.yml
+  tags: samba_user
+
+- name: Samba 共有設定を読み込む
+  ansible.builtin.include_tasks: samba_config.yml
+  tags: samba_config

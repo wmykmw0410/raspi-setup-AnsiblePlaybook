@@ -7,11 +7,9 @@
     group: root
     mode: "0644"
   notify: smbd を再起動する
-  tags: samba_config
 
 - name: smbd を起動・自動起動に設定する
   ansible.builtin.service:
     name: smbd
     state: started
     enabled: true
-  tags: samba_config

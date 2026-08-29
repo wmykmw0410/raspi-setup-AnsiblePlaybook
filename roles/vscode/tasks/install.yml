@@ -9,9 +9,9 @@
     update_cache: true
 
 - name: Microsoft GPGキー追加
-  ansible.builtin.shell: |
-    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
-  args:
+  ansible.builtin.shell:
+    cmd: set -o pipefail && wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
+    executable: /bin/bash
     creates: /usr/share/keyrings/microsoft.gpg
 
 - name: VSCode リポジトリ追加

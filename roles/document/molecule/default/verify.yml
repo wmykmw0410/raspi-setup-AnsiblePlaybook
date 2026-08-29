@@ -6,10 +6,10 @@
     - name: credential.txt が配置されていることを確認する
       ansible.builtin.stat:
         path: /home/swimmy/Documents/credential.txt
-      register: credential_file
-      failed_when: not credential_file.stat.exists
+      register: document_credential_file
+      failed_when: not document_credential_file.stat.exists
 
     - name: credential.txt の権限が0600であることを確認する
       ansible.builtin.assert:
         that:
-          - credential_file.stat.mode == "0600"
+          - document_credential_file.stat.mode == "0600"

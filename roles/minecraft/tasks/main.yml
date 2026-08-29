@@ -11,8 +11,9 @@
 - name: install Pi-Apps
   become: true
   become_user: "{{ local_user }}"
-  ansible.builtin.shell: wget -qO- https://raw.githubusercontent.com/Botspot/pi-apps/master/install | bash
-  args:
+  ansible.builtin.shell:
+    cmd: set -o pipefail && wget -qO- https://raw.githubusercontent.com/Botspot/pi-apps/master/install | bash
+    executable: /bin/bash
     creates: "/home/{{ local_user }}/pi-apps"
 
 - name: remove Pi-Apps shortcut from desktop
@@ -24,6 +25,7 @@
   become: true
   become_user: "{{ local_user }}"
   ansible.builtin.command: "/home/{{ local_user }}/pi-apps/manage install \"Minecraft Pi (Modded)\""
+  changed_when: false
 
 - name: clone mcpi
   ansible.builtin.git:
@@ -34,3 +36,4 @@
   ansible.builtin.command: python3 setup.py install
   args:
     chdir: "/home/{{ local_user }}/mcpi"
+  changed_when: false

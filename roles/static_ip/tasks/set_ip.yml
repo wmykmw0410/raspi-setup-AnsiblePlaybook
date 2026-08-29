@@ -7,7 +7,7 @@
 
 - name: 固定IPアドレスが他機器で使用されていないか確認する
   ansible.builtin.command: arping -D -c 2 -I eth0 {{ static_ip }}
-  register: arping_result
+  register: static_ip_arping_result
   changed_when: false
   failed_when: false
   when:
@@ -18,22 +18,22 @@
   ansible.builtin.fail:
     msg: >-
       固定IPアドレス {{ static_ip }} は既に他の機器
-      (MACアドレス: {{ arping_result.stdout | regex_search('\[([0-9A-Fa-f:]+)\]', '\1') | default([], true) | first | default('不明', true) }})
+      (MACアドレス: {{ static_ip_arping_result.stdout | regex_search('\[([0-9A-Fa-f:]+)\]', '\1') | default([], true) | first | default('不明', true) }})
       で使用されています。別のIPアドレスを指定してください。
   when:
     - static_ip is defined
-    - arping_result is not skipped
-    - arping_result.rc == 1
+    - static_ip_arping_result is not skipped
+    - static_ip_arping_result.rc == 1
 
 - name: eth0 に紐づく接続名を取得する
   ansible.builtin.command: nmcli -t -g GENERAL.CONNECTION dev show eth0
-  register: eth0_connection
+  register: static_ip_eth0_connection
   changed_when: false
   when: static_ip is defined
 
 - name: 固定IPアドレスを設定する
   community.general.nmcli:
-    conn_name: "{{ eth0_connection.stdout }}"
+    conn_name: "{{ static_ip_eth0_connection.stdout }}"
     ifname: eth0
     type: ethernet
     method4: manual
@@ -41,14 +41,14 @@
     gw4: "{{ static_ip | ansible.builtin.regex_replace('\\.[0-9]+$', '.1') }}"
     dns4: "{{ dns_servers }}"
     state: present
-  register: nmcli_result
+  register: static_ip_nmcli_result
   when: static_ip is defined
 
 - name: 固定IP設定を反映する
-  ansible.builtin.command: nmcli con up "{{ eth0_connection.stdout }}"
+  ansible.builtin.command: nmcli con up "{{ static_ip_eth0_connection.stdout }}"
   when:
     - static_ip is defined
-    - nmcli_result is changed
+    - static_ip_nmcli_result is changed
   async: 3
   poll: 0
 

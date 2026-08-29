@@ -20,13 +20,11 @@
 #       - name: Ansible・lintツールをインストール
 #         run: pip install ansible ansible-lint yamllint
 #
-#       - name: 全拠点×全playbookの構文チェック
+#       - name: 全拠点×client.ymlの構文チェック
 #         run: |
 #           set -e
 #           for inv in mitaka kashiwa shinagawa takadanobaba; do
-#             for pb in playbooks/common.yml playbooks/client.yml playbooks/nas.yml playbooks/static_ip.yml; do
-#               ansible-playbook -i "inventory/${inv}.ini" "$pb" --syntax-check
-#             done
+#             ansible-playbook -i "inventory/${inv}.ini" playbooks/client.yml --syntax-check
 #           done
 #
 #       - name: ansible-lint

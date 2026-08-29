@@ -4,7 +4,6 @@
     path: "{{ nas_mount }}"
     state: directory
     mode: "0755"
-  tags: usb_mount
 
 - name: "{{ usb_device }} を {{ nas_mount }} にマウントして fstab に登録する"
   ansible.builtin.mount:
@@ -15,4 +14,3 @@
     state: mounted
     dump: "0"
     passno: "0"
-  tags: usb_mount
