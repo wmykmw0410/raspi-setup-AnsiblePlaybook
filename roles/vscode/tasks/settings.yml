@@ -23,7 +23,7 @@
     mode: "0644"
     content: |
       {
-          "workbench.colorTheme": "Visual Studio Dark",
+          "workbench.colorTheme": "Default Dark Modern",
           "files.exclude": {
               "**/._*": true
           },
