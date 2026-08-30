@@ -133,6 +133,18 @@
       <img class="icon" src="https://www.google.com/s2/favicons?domain=admin.typing.programming-testing.com&sz=64" alt="">
       <span class="label">タイピング検定</span>
     </a>
+    <a href="https://demo.programming-testing.com/player/auth/login">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=demo.programming-testing.com&sz=64" alt="">
+      <span class="label">プログラミング検定（デモ）</span>
+    </a>
+    <a href="https://learning.programming-sc.com/">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=learning.programming-sc.com&sz=64" alt="">
+      <span class="label">プログラミング学習</span>
+    </a>
+    <a href="https://swimmy-school.jp/blocklist.php">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=swimmy-school.jp&sz=64" alt="">
+      <span class="label">ブロックリスト</span>
+    </a>
 {% for shortcut in extra_shortcuts | default([]) %}
     <a href="{{ shortcut.url }}">
       <img class="icon" src="https://www.google.com/s2/favicons?domain={{ shortcut.url | urlsplit('hostname') }}&sz=64" alt="">
