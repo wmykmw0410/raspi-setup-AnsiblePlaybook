@@ -3,5 +3,6 @@
   "RestoreOnStartup": 4,
   "RestoreOnStartupURLs": ["file:///etc/chromium/newtab.html"],
   "NewTabPageLocation": "file:///etc/chromium/newtab.html",
-  "PasswordManagerEnabled": false
+  "PasswordManagerEnabled": false,
+  "DefaultMediaStreamSetting": 2
 }
