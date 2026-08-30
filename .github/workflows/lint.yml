@@ -23,7 +23,7 @@
 #       - name: 全拠点×client.ymlの構文チェック
 #         run: |
 #           set -e
-#           for inv in mitaka kashiwa shinagawa takadanobaba; do
+#           for inv in mitaka kashiwa shinagawa takadanobaba roppongi; do
 #             ansible-playbook -i "inventory/${inv}.ini" playbooks/client.yml --syntax-check
 #           done
 #

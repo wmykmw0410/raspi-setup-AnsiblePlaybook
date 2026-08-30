@@ -91,6 +91,7 @@ ansible/
 │   ├── mitaka.ini          # 三鷹拠点（NAS・クライアント）
 │   ├── kashiwa.ini         # 柏拠点（NAS・クライアント）
 │   ├── takadanobaba.ini    # 高田馬場拠点（NAS・クライアント）
+│   ├── roppongi.ini        # 六本木拠点（NAS・クライアント）
 │   ├── group_vars/
 │   │   ├── all.yml         # 全ホスト共通変数
 │   │   ├── client.yml      # クライアント専用変数
@@ -99,7 +100,8 @@ ansible/
 │       ├── shinagawa.yml   # 品川拠点固有の変数（GoogleDriveパスワード等）
 │       ├── mitaka.yml      # 三鷹拠点固有の変数
 │       ├── kashiwa.yml     # 柏拠点固有の変数
-│       └── takadanobaba.yml # 高田馬場拠点固有の変数
+│       ├── takadanobaba.yml # 高田馬場拠点固有の変数
+│       └── roppongi.yml    # 六本木拠点固有の変数
 ├── playbooks/
 │   ├── common.yml          # 共通ロール（全ホスト）
 │   ├── nas.yml             # NASサーバーセットアップ
@@ -159,6 +161,7 @@ ansible/
 | 三鷹 | `inventory/mitaka.ini` |
 | 柏 | `inventory/kashiwa.ini` |
 | 高田馬場 | `inventory/takadanobaba.ini` |
+| 六本木 | `inventory/roppongi.ini` |
 
 以下は三鷹拠点を例にした編集内容です。他拠点も同様の形式で該当ファイルを編集してください。
 
@@ -196,6 +199,9 @@ ansible all -i inventory/kashiwa.ini -m ping --ask-vault-pass
 
 # 高田馬場拠点
 ansible all -i inventory/takadanobaba.ini -m ping --ask-vault-pass
+
+# 六本木拠点
+ansible all -i inventory/roppongi.ini -m ping --ask-vault-pass
 ```
 
 特定のホストのみ確認したい場合は、`all` の代わりにホスト名を指定します。
@@ -219,6 +225,7 @@ ansible-playbook -i inventory/shinagawa.ini playbooks/static_ip.yml --ask-vault-
 ansible-playbook -i inventory/mitaka.ini playbooks/static_ip.yml --ask-vault-pass
 ansible-playbook -i inventory/kashiwa.ini playbooks/static_ip.yml --ask-vault-pass
 ansible-playbook -i inventory/takadanobaba.ini playbooks/static_ip.yml --ask-vault-pass
+ansible-playbook -i inventory/roppongi.ini playbooks/static_ip.yml --ask-vault-pass
 ```
 
 実行が成功すると、インベントリファイルの `ansible_host` はDHCPのIPアドレスから `<hostname>.local` へ自動的に書き換わります（手動での編集は不要です）。以降はこのホスト名で接続します。
@@ -235,6 +242,7 @@ ansible-playbook -i inventory/shinagawa.ini playbooks/nas.yml --ask-vault-pass
 ansible-playbook -i inventory/mitaka.ini playbooks/nas.yml --ask-vault-pass
 ansible-playbook -i inventory/kashiwa.ini playbooks/nas.yml --ask-vault-pass
 ansible-playbook -i inventory/takadanobaba.ini playbooks/nas.yml --ask-vault-pass
+ansible-playbook -i inventory/roppongi.ini playbooks/nas.yml --ask-vault-pass
 ```
 
 ```bash
@@ -244,6 +252,7 @@ ansible-playbook -i inventory/shinagawa.ini playbooks/client.yml --limit client 
 ansible-playbook -i inventory/mitaka.ini playbooks/client.yml --limit client --ask-vault-pass
 ansible-playbook -i inventory/kashiwa.ini playbooks/client.yml --limit client --ask-vault-pass
 ansible-playbook -i inventory/takadanobaba.ini playbooks/client.yml --limit client --ask-vault-pass
+ansible-playbook -i inventory/roppongi.ini playbooks/client.yml --limit client --ask-vault-pass
 ```
 
 `--limit` にはグループ名の代わりに具体的なホスト名も指定できます。特定の1台（または一部）だけに絞って実行したい場合に使います。
@@ -260,6 +269,7 @@ ansible-playbook -i inventory/shinagawa.ini playbooks/nas.yml --check --ask-vaul
 ansible-playbook -i inventory/mitaka.ini playbooks/nas.yml --check --ask-vault-pass
 ansible-playbook -i inventory/kashiwa.ini playbooks/nas.yml --check --ask-vault-pass
 ansible-playbook -i inventory/takadanobaba.ini playbooks/nas.yml --check --ask-vault-pass
+ansible-playbook -i inventory/roppongi.ini playbooks/nas.yml --check --ask-vault-pass
 ```
 
 `--diff` を付けると、`smb.conf` などテンプレート系ファイルの変更差分を確認できます（`--check`と併用すると実際には適用せず差分だけ確認できます）。
