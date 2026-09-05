@@ -22,3 +22,11 @@
     owner: root
     group: root
     mode: "0644"
+
+- name: 新しいタブページの CSS を配置する
+  ansible.builtin.copy:
+    src: newtab.css
+    dest: /etc/chromium/newtab.css
+    owner: root
+    group: root
+    mode: "0644"
