@@ -1,0 +1,24 @@
+---
+- name: Chromium をインストールする
+  ansible.builtin.apt:
+    name: chromium
+    state: present
+    update_cache: true
+
+- name: Labwc の設定ディレクトリを作成する
+  ansible.builtin.file:
+    path: "/home/{{ local_user }}/.config/labwc"
+    state: directory
+    owner: "{{ local_user }}"
+    group: "{{ local_user }}"
+    mode: "0755"
+
+- name: Labwc の autostart に Chromium 自動起動（Googleドライブ）を配置する
+  ansible.builtin.copy:
+    dest: "/home/{{ local_user }}/.config/labwc/autostart"
+    content: |
+      chromium --user-data-dir=/home/{{ local_user }}/.config/chromium https://drive.google.com &
+    owner: "{{ local_user }}"
+    group: "{{ local_user }}"
+    mode: "0644"
+  notify: Reboot raspi

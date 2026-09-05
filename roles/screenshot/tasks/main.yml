@@ -1,0 +1,5 @@
+---
+- name: gnome-screenshot をインストールする
+  ansible.builtin.apt:
+    name: gnome-screenshot
+    state: present

@@ -1,0 +1,5 @@
+---
+- name: Ansible をインストールする
+  ansible.builtin.apt:
+    name: ansible
+    state: present

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ショートカット</title>
+  <link rel="stylesheet" href="newtab.css">
+</head>
+<body>
+  <form class="search" action="https://www.google.com/search" method="get">
+    <img src="https://www.google.com/favicon.ico" alt="">
+    <input type="text" name="q" placeholder="Google 検索" autofocus>
+  </form>
+  <div class="grid">
+    <a href="https://manabi-gakushu.benesse.ne.jp/gakushu/typing/homeposition.html">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=manabi-gakushu.benesse.ne.jp&sz=64" alt="">
+      <span class="label">ホームポジション</span>
+    </a>
+    <a href="https://www.e-typing.ne.jp/">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=www.e-typing.ne.jp&sz=64" alt="">
+      <span class="label">e-typing</span>
+    </a>
+    <a href="https://docs.python.org/ja/3.11/">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=docs.python.org&sz=64" alt="">
+      <span class="label">Python ドキュメント</span>
+    </a>
+    <a href="https://makecode.microbit.org/?lang=ja">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=makecode.microbit.org&sz=64" alt="">
+      <span class="label">MakeCode micro:bit</span>
+    </a>
+    <a href="https://python.microbit.org/v/3">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=python.microbit.org&sz=64" alt="">
+      <span class="label">Python micro:bit</span>
+    </a>
+    <a href="https://westplain.sakura.ne.jp/translate/pygame/">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=westplain.sakura.ne.jp&sz=64" alt="">
+      <span class="label">Pygame ドキュメント</span>
+    </a>
+    <a href="https://flask.palletsprojects.com/">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=flask.palletsprojects.com&sz=64" alt="">
+      <span class="label">Flask ドキュメント</span>
+    </a>
+    <a href="https://developer.mozilla.org/ja/docs/Web/HTML">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=developer.mozilla.org&sz=64" alt="">
+      <span class="label">HTML ドキュメント</span>
+    </a>
+    <a href="https://admin.programming-testing.com/organizer/auth/login">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=admin.programming-testing.com&sz=64" alt="">
+      <span class="label">プログラミング検定</span>
+    </a>
+    <a href="https://admin.typing.programming-testing.com/login">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=admin.typing.programming-testing.com&sz=64" alt="">
+      <span class="label">タイピング検定</span>
+    </a>
+    <a href="https://demo.programming-testing.com/player/auth/login">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=demo.programming-testing.com&sz=64" alt="">
+      <span class="label">プログラミング検定（デモ）</span>
+    </a>
+    <a href="https://learning.programming-sc.com/">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=learning.programming-sc.com&sz=64" alt="">
+      <span class="label">プログラミング学習</span>
+    </a>
+    <a href="https://swimmy-school.jp/blocklist.php">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain=swimmy-school.jp&sz=64" alt="">
+      <span class="label">ブロックリスト</span>
+    </a>
+{% for shortcut in extra_shortcuts | default([]) %}
+    <a href="{{ shortcut.url }}">
+      <img class="icon" src="https://www.google.com/s2/favicons?domain={{ shortcut.url | urlsplit('hostname') }}&sz=64" alt="">
+      <span class="label">{{ shortcut.label }}</span>
+    </a>
+{% endfor %}
+  </div>
+</body>
+</html>

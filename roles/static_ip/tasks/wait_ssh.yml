@@ -1,0 +1,8 @@
+---
+- name: 固定IPで SSH ポートに到達できることを確認する
+  ansible.builtin.wait_for:
+    host: "{{ ansible_host }}"
+    port: 22
+    timeout: 60
+  delegate_to: localhost
+  become: false

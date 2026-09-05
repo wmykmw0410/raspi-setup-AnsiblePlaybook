@@ -1,0 +1,48 @@
+---
+- name: 固定IPアドレスの設定
+  hosts: client:nas
+  become: true
+
+  roles:
+    - role: mdns
+      tags: mdns
+    - role: static_ip
+      tasks_from: set_ip.yml
+      tags: static_ip
+
+- name: 固定IPへの疎通を待つ
+  hosts: static_ip_check
+  gather_facts: false
+  become: false
+
+  roles:
+    - role: static_ip
+      tasks_from: wait_ssh.yml
+      tags: static_ip
+
+- name: 再起動
+  hosts: static_ip_check
+  become: true
+
+  tasks:
+    - name: 再起動する
+      ansible.builtin.reboot:
+
+- name: 接続確認
+  hosts: static_ip_check
+  become: true
+
+  roles:
+    - role: static_ip
+      tasks_from: check.yml
+      tags: static_ip_check
+
+- name: 固定IPでSSH認証できることを確認する
+  hosts: static_ip_check
+  gather_facts: false
+  become: false
+
+  roles:
+    - role: static_ip
+      tasks_from: ssh_auth.yml
+      tags: static_ip_check

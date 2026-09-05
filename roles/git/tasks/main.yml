@@ -1,0 +1,5 @@
+---
+- name: git をインストールする
+  ansible.builtin.apt:
+    name: git
+    state: present

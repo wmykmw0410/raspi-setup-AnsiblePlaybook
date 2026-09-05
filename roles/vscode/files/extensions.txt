@@ -1,0 +1,56 @@
+# インデントを色分けして視覚的に見やすくする
+oderwat.indent-rainbow
+
+# スペルチェッカー（英語）
+streetsidesoftware.code-spell-checker
+
+# Markdown プレビュー・目次・ショートカット強化
+yzhang.markdown-all-in-one
+
+# Python 言語サポート
+ms-python.python
+
+# Python 静的型解析・補完（Pylance）
+ms-python.vscode-pylance
+
+# Python デバッガー
+ms-python.debugpy
+
+# Python コードフォーマッター（Black）
+ms-python.black-formatter
+
+# Python docstring 自動生成
+njpwerner.autodocstring
+
+# Flask スニペット
+cstrap.flask-snippets
+
+# HTML/CSS 補完・クラス名サジェスト
+ecmel.vscode-html-css
+
+# VS Code 日本語化
+ms-ceintl.vscode-language-pack-ja
+
+# Gitコミット履歴・グラフ表示
+mhutchie.git-graph
+
+# GitHub Pull Request・Issue連携
+github.vscode-pull-request-github
+
+# SQLite データベースの閲覧・編集
+alexcvzz.vscode-sqlite
+
+# SQLite データベースの閲覧（テーブルビューア）
+qwtel.sqlite-viewer
+
+# SQL実行・DB接続
+mtxr.sqltools
+
+# SQL整形
+adpyke.vscode-sql-formatter
+
+# JavaScript スニペット
+xabikos.javascriptsnippets
+
+# HTML内のCSSクラス名補完
+zignd.html-css-class-completion
