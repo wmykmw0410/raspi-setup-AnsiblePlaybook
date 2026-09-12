@@ -1,10 +1,4 @@
 ---
-- name: "{{ samba_user }} システムユーザーを作成する"
-  ansible.builtin.user:
-    name: "{{ samba_user }}"
-    shell: /usr/sbin/nologin
-    create_home: false
-
 - name: "{{ samba_user }} が Samba に登録済みか確認する"
   ansible.builtin.command: pdbedit -L
   register: nas_server_pdbedit_list

@@ -1,4 +1,4 @@
-samba_user: sambauser
+samba_user: swimmy
 samba_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           65303566396563393863383630633863653932366636666239303731353432643366323538623830

@@ -1,6 +1,6 @@
 # 変数リファレンス
 
-パスワード類は `ansible-vault` で暗号化されています。実際の値を確認する方法は [README](../README.md#nas-への接続方法) を参照してください。
+パスワード類は `ansible-vault` で暗号化されています。実際の値を確認する方法は [README](../../README.md#nas-への接続方法) を参照してください。
 
 ## 全ホスト共通 (`inventory/group_vars/all.yml`)
 
@@ -19,7 +19,7 @@ dns_servers:                              # 固定IP化時に設定するDNSサ�
 
 ```yaml
 nas_share: nas             # 共有フォルダ名
-nas_user: sambauser        # Samba ユーザー名
+nas_user: swimmy        # Samba ユーザー名
 nas_pass: <Vault化>        # Samba パスワード
 mount_point: /mnt/nas      # クライアント側マウントポイント
 root_password: <Vault化>   # credential.txt に記載する root ユーザパスワード（全拠点共通）
@@ -30,7 +30,7 @@ root_password: <Vault化>   # credential.txt に記載する root ユーザパ�
 ## NASサーバー専用 (`inventory/group_vars/nas.yml`)
 
 ```yaml
-samba_user: sambauser        # Samba アクセス用ユーザー
+samba_user: swimmy        # Samba アクセス用ユーザー
 samba_password: <Vault化>    # Samba パスワード
 share_name: nas              # 共有フォルダ名
 usb_device: /dev/sda1        # USB デバイスパス
@@ -62,4 +62,4 @@ raspi01 ansible_host=raspi01.local static_ip=192.168.50.11
 - `ansible_host`: 実際にAnsibleが接続する宛先。初回はDHCPのIPアドレス、`playbooks/static_ip.yml` 実行後は自動的に `<hostname>.local` に書き換わります
 - `static_ip`: 固定化したいIPアドレス。`static_ip` ロールでの固定化と、`nas_mount` ロールのマウント先の両方に使われます
 
-詳細は [README の「1. 接続先を編集する」](../README.md#1-接続先を編集する) を参照してください。
+詳細は [README の「1. 接続先を編集する」](../../README.md#1-接続先を編集する) を参照してください。

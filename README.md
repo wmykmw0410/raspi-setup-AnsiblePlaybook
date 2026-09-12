@@ -29,7 +29,7 @@ Raspberry Pi をNASサーバー・クライアントとして構成する Ansibl
 
 ## Ansibleとは
 
-Ansible は、サーバーやPCなどの構成管理・自動化を行うオープンソースのツールです。エージェントレスかつ宣言的な設定（Playbook）、冪等性が特徴で、`ansible-playbook` コマンドを実行するだけで拠点間・端末間で同一の設定を再現できます。基本用語や仕組みの詳細は [Ansibleとは（詳細）](docs/about-ansible.md) を参照してください。
+Ansible は、サーバーやPCなどの構成管理・自動化を行うオープンソースのツールです。エージェントレスかつ宣言的な設定（Playbook）、冪等性が特徴で、`ansible-playbook` コマンドを実行するだけで拠点間・端末間で同一の設定を再現できます。基本用語や仕組みの詳細は [Ansibleとは（詳細）](docs/reference/about-ansible.md) を参照してください。
 
 このリポジトリでは、複数拠点・複数台の Raspberry Pi（NASサーバー・クライアント）に対して、OSセットアップ後の各種インストール・設定作業を Ansible で自動化しています。
 
@@ -42,7 +42,7 @@ Ansible は、サーバーやPCなどの構成管理・自動化を行うオー�
 Samba によるファイル共有サーバーです。
 
 - USB ドライブ（exFAT）をマウントし、ネットワーク経由でファイル共有（`\\<NASのIPアドレス>\nas` など）を提供
-- 共有フォルダへの読み書きは Samba ユーザー（`sambauser`）で認証
+- 共有フォルダへの読み書きは Samba ユーザー（`swimmy`）で認証
 
 ### クライアント（授業用PC）
 
@@ -53,7 +53,7 @@ Samba によるファイル共有サーバーです。
 - **Minecraft Pi**: Python（`mcpi` ライブラリ）でMinecraftを操作する学習環境
 - **Python環境**: `pygame` / `flask` / `keyboard` 等の学習用ライブラリを導入
 - **NASマウント**: NASサーバーの共有フォルダを起動時に自動マウント（`/mnt/nas`）
-- **credential.txt**: `~/Documents` に、rootパスワード・Googleドライブパスワードを記載したファイルを配置（拠点固有の値は `inventory/site_vars/<拠点>.yml` で設定。詳細は[変数リファレンス](docs/variables.md)）
+- **credential.txt**: `~/Documents` に、rootパスワード・Googleドライブパスワードを記載したファイルを配置（拠点固有の値は `inventory/site_vars/<拠点>.yml` で設定。詳細は[変数リファレンス](docs/reference/variables.md)）
 
 ### 共通機能（NAS・クライアント共通）
 
@@ -67,7 +67,7 @@ Samba によるファイル共有サーバーです。
 
 ### 実行元PC
 
-- Ansible インストール済み（未インストールの場合は [Ansible インストール手順](docs/setup-controller.md) を参照）
+- Ansible インストール済み（未インストールの場合は [Ansible インストール手順](docs/setup/controller.md) を参照）
 
 ### クライアント用(授業用)
 
@@ -80,14 +80,16 @@ Samba によるファイル共有サーバーです。
 - SSH 接続可能な状態
 - USB ドライブが exFAT フォーマット済み
 
-`Raspberry Pi OS` のインストール・初期設定手順は [Raspberry Pi OS セットアップ手順](docs/setup-raspberrypi.md) を参照してください。
+`Raspberry Pi OS` のインストール・初期設定手順は [Raspberry Pi OS セットアップ手順](docs/setup/raspberrypi.md) を参照してください。NASサーバーをAnsibleを使わずコマンド操作だけで構築したい場合は [NAS 手動設定手順](docs/setup/nas.md)（USBドライブのexFATフォーマット手順を含む）、基本セットアップ済みのクライアントにNAS接続のみ手動で設定したい場合は [クライアント 手動設定手順](docs/setup/client.md) を参照してください。
 
 ## ファイル構成
 
 ```
 ansible/
 ├── ansible.cfg             # Ansible設定（roles_path・host_key_checking等）
-├── docs/                   # セットアップ手順・トラブルシューティング・変数リファレンス
+├── docs/
+│   ├── setup/              # セットアップ手順（実行元PC・Raspberry Pi OS・NAS/クライアント手動設定）
+│   └── reference/          # Ansibleとは・変数リファレンス・トラブルシューティング
 ├── inventory/
 │   ├── shinagawa.ini       # 品川拠点（NAS・クライアント）
 │   ├── mitaka.ini          # 三鷹拠点（NAS・クライアント）
@@ -153,7 +155,7 @@ ansible/
 拠点ごとのインベントリファイルを実際の環境に合わせて変更します。`[client]`・`[nas]` とも、各ホストに `ansible_host`（接続先）と `static_ip`（固定化したいIPアドレス）を指定します。
 
 - `static_ip`: 各ホストに割り当てたい固定IPアドレス。[固定IPアドレスの設定](#固定ipアドレスの設定初回のみ)がこの値を使って実際にIPを固定化するほか、`nas_mount` ロールのマウント先にも使われるため、固定化がまだでも常に設定しておきます。
-- `ansible_host`: 実際にAnsibleが接続する宛先。**初回はDHCPで割り振られたIPアドレスを記載**します。ラズパイ起動後、[Raspberry Pi OS セットアップ手順](docs/setup-raspberrypi.md)の「IPアドレスを確認する」の通り `ip addr show` またはルーターの管理画面で確認してください。DHCP予約をしていない環境では、このIPアドレスは `static_ip` と一致するとは限りません。[固定IPアドレスの設定](#固定ipアドレスの設定初回のみ)が完了すると、Playbookが自動的に `<hostname>.local`（mDNS）へ書き換えます。
+- `ansible_host`: 実際にAnsibleが接続する宛先。**初回はDHCPで割り振られたIPアドレスを記載**します。ラズパイ起動後、[Raspberry Pi OS セットアップ手順](docs/setup/raspberrypi.md)の「IPアドレスを確認する」の通り `ip addr show` またはルーターの管理画面で確認してください。DHCP予約をしていない環境では、このIPアドレスは `static_ip` と一致するとは限りません。[固定IPアドレスの設定](#固定ipアドレスの設定初回のみ)が完了すると、Playbookが自動的に `<hostname>.local`（mDNS）へ書き換えます。
 
 インベントリファイルは拠点ごとに `inventory/` 配下に分かれており、いずれも同じ `[client]` / `[nas]` の構成です。
 
@@ -212,7 +214,7 @@ ansible all -i inventory/roppongi.ini -m ping --ask-vault-pass
 ansible raspi01 -i inventory/mitaka.ini -m ping --ask-vault-pass
 ```
 
-接続できない場合は [トラブルシューティング](docs/troubleshooting.md) を参照してください。
+接続できない場合は [トラブルシューティング](docs/reference/troubleshooting.md) を参照してください。
 
 ## Playbook の実行
 
@@ -232,9 +234,9 @@ ansible-playbook -i inventory/roppongi.ini playbooks/static_ip.yml --ask-vault-p
 
 実行が成功すると、インベントリファイルの `ansible_host` はDHCPのIPアドレスから `<hostname>.local` へ自動的に書き換わります（手動での編集は不要です）。以降はこのホスト名で接続します。
 
-ラズパイを作り直した場合はSSHホスト鍵が変わり`known_hosts`との不一致警告で接続できなくなることがあります。その場合は [トラブルシューティング](docs/troubleshooting.md) を参照して対処してから実行してください。
+ラズパイを作り直した場合はSSHホスト鍵が変わり`known_hosts`との不一致警告で接続できなくなることがあります。その場合は [トラブルシューティング](docs/reference/troubleshooting.md) を参照して対処してから実行してください。
 
-IPアドレスを固定化せずDHCPのまま運用することもできます。その場合の注意点は [Raspberry Pi OS セットアップ手順の「固定化しない場合」](docs/setup-raspberrypi.md#固定化しない場合) を参照してください。
+IPアドレスを固定化せずDHCPのまま運用することもできます。その場合の注意点は [Raspberry Pi OS セットアップ手順の「固定化しない場合」](docs/setup/raspberrypi.md#固定化しない場合) を参照してください。
 
 `ansible-playbook` は `-i` で指定したインベントリファイルに対して、`playbooks/` 配下のPlaybookを実行します。`nas.yml` は `hosts: nas`（NASサーバー）、`client.yml` は `hosts: client`（クライアント端末）を対象に、それぞれ `common.yml`（全ホスト共通ロール）を取り込んだ上で拠点固有のロールを適用し、最後に自動再起動します。
 
@@ -362,13 +364,13 @@ ansible localhost -m debug -a "var=samba_password" -e "@inventory/group_vars/nas
 
 | 項目 | デフォルト値 |
 |---|---|
-| ユーザー名 | `sambauser` |
+| ユーザー名 | `swimmy` |
 | パスワード | ****** |
 
 | OS | 方法 |
 |---|---|
 | Windows | エクスプローラーに `\\<NASのIPアドレス>\nas` を入力し、上記で認証 |
-| Linux（CLI） | `smbclient //<NASのIPアドレス>/nas -U sambauser` を実行しパスワードを入力 |
+| Linux（CLI） | `smbclient //<NASのIPアドレス>/nas -U swimmy` を実行しパスワードを入力 |
 | Linux（GUI） | ファイルマネージャーのアドレス欄に `smb://<NASのIPアドレス>/nas` を入力し、上記で認証 |
 
 NASのIPアドレスは拠点ごとのインベントリファイルの `[nas]` セクションを参照してください。
@@ -377,8 +379,10 @@ NASのIPアドレスは拠点ごとのインベントリファイルの `[nas]` 
 
 ## 関連ドキュメント
 
-- [Ansibleとは（詳細）](docs/about-ansible.md)
-- [Ansible インストール（実行元PC）](docs/setup-controller.md)
-- [Raspberry Pi OS セットアップ（手動）](docs/setup-raspberrypi.md)
-- [トラブルシューティング](docs/troubleshooting.md)
-- [変数リファレンス](docs/variables.md)
+- [Ansibleとは（詳細）](docs/reference/about-ansible.md)
+- [Ansible インストール（実行元PC）](docs/setup/controller.md)
+- [Raspberry Pi OS セットアップ（手動）](docs/setup/raspberrypi.md)
+- [NAS 手動設定手順](docs/setup/nas.md)
+- [クライアント 手動設定手順](docs/setup/client.md)
+- [トラブルシューティング](docs/reference/troubleshooting.md)
+- [変数リファレンス](docs/reference/variables.md)

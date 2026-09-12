@@ -48,7 +48,7 @@ project/
 - `templates/` と `files/` はどちらも「配布するファイル」を置く場所ですが、`templates/` はJinja2記法（`{{ 変数 }}` など）で内容を動的に変えられるのに対し、`files/` は変数展開せずそのままコピーする点が異なります。
 - `defaults/main.yml` はロール単位のデフォルト値で、`inventory/group_vars/` の変数より優先度が低く設定されています（`group_vars` で上書きされます）。
 
-このリポジトリの実際のディレクトリ構成は [README のファイル構成](../README.md#ファイル構成) を参照してください。
+このリポジトリの実際のディレクトリ構成は [README のファイル構成](../../README.md#ファイル構成) を参照してください。
 
 ## Playbook の構造（このリポジトリの例）
 
@@ -168,8 +168,8 @@ provisioned_at = 2026-01-01
 | `ansible-playbook ... --tags <タグ名>` | 指定したロールだけ実行する |
 | `ansible-playbook ... -e "key=value"` | 変数を実行時に上書きする（インベントリファイルの値より優先されます） |
 | `ansible-playbook ... --check` | 実際には変更を適用せず、変更予定の内容だけを確認する（ドライラン） |
-| `ansible-vault encrypt_string '値' --name '変数名' --ask-vault-pass` | 値をVault化する（詳細は [README](../README.md#playbook-の実行)） |
+| `ansible-vault encrypt_string '値' --name '変数名' --ask-vault-pass` | 値をVault化する（詳細は [README](../../README.md#playbook-の実行)） |
 
 このリポジトリではパスワード類がVault化されているため、上記の `ansible`・`ansible-playbook` コマンドには基本的に `--ask-vault-pass` が必要です。
 
-具体的な実行例は [README](../README.md#playbook-の実行) を参照してください。
+具体的な実行例は [README](../../README.md#playbook-の実行) を参照してください。

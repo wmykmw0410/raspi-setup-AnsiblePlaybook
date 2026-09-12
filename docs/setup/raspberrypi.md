@@ -95,7 +95,7 @@ ip addr show
 
 または、ルーターの管理画面から確認します。
 
-確認したIPアドレスを `inventory/<拠点>.ini` の該当ホストの `ansible_host` に記載します（`static_ip` は固定化したい最終的なIPアドレスなので、この時点のDHCPのIPアドレスと一致するとは限りません。詳細は [README](../README.md#1-接続先を編集する) 参照）。
+確認したIPアドレスを `inventory/<拠点>.ini` の該当ホストの `ansible_host` に記載します（`static_ip` は固定化したい最終的なIPアドレスなので、この時点のDHCPのIPアドレスと一致するとは限りません。詳細は [README](../../README.md#1-接続先を編集する) 参照）。
 
 ```ini
 raspi01 ansible_host=192.168.50.23 static_ip=192.168.50.11
@@ -178,7 +178,7 @@ ip addr show
 
 IPアドレスを固定化せず、DHCPで割り振られたIPアドレスのまま運用することもできます。その場合は以下の点に注意してください。
 
-- `inventory/<拠点>.ini` の `ansible_host` は、手順2で確認したDHCPのIPアドレスのままにしておきます（`static_ip` は固定化を行わなくても記載しておきます。詳細は [README](../README.md#1-接続先を編集する) 参照）。
+- `inventory/<拠点>.ini` の `ansible_host` は、手順2で確認したDHCPのIPアドレスのままにしておきます（`static_ip` は固定化を行わなくても記載しておきます。詳細は [README](../../README.md#1-接続先を編集する) 参照）。
 - ラズパイを再起動するとDHCPによりIPアドレスが変わる場合があります。その都度「[2. IPアドレスを確認する](#2-ipアドレスを確認する)」の手順でIPアドレスを再確認し、`ansible_host` を実際のIPアドレスに書き換えてください。
 - IPアドレスの変動を避けたい場合は、ラズパイ側を固定化する代わりに、ルーターのDHCP予約機能（MACアドレスに対して常に同じIPアドレスを割り当てる機能）を利用する方法もあります。設定方法はお使いのルーターのマニュアルを参照してください。DHCP予約したIPアドレスを `ansible_host`・`static_ip` の両方に記載しておくと、以降はIPアドレスの変化を気にする必要がなくなります。
 
@@ -190,9 +190,9 @@ IPアドレスを固定化せず、DHCPで割り振られたIPアドレスのま
 ssh swimmy@<IPアドレス>
 ```
 
-> ラズパイを作り直した（SDカードを焼き直した）場合にSSH接続できない場合は、[トラブルシューティング](./troubleshooting.md#ssh接続時にremote-host-identification-has-changedと出る) を参照してください。
+> ラズパイを作り直した（SDカードを焼き直した）場合にSSH接続できない場合は、[トラブルシューティング](../reference/troubleshooting.md#ssh接続時にremote-host-identification-has-changedと出る) を参照してください。
 
-`ansible.cfg` の `host_key_checking = False` は「未知のホスト」を自動承認する設定であり、ホストキーが変化したホストへの接続はブロックされたままです（詳細は[トラブルシューティング](./troubleshooting.md#ssh接続時にremote-host-identification-has-changedと出る)参照）。疎通確認・パスワード認証の動作確認を兼ねて、`ansible-playbook` の前に必ず一度手動SSHで接続できることを確認してください。
+`ansible.cfg` の `host_key_checking = False` は「未知のホスト」を自動承認する設定であり、ホストキーが変化したホストへの接続はブロックされたままです（詳細は[トラブルシューティング](../reference/troubleshooting.md#ssh接続時にremote-host-identification-has-changedと出る)参照）。疎通確認・パスワード認証の動作確認を兼ねて、`ansible-playbook` の前に必ず一度手動SSHで接続できることを確認してください。
 
 ## 5. （NASサーバーのみ）USB デバイスパスを確認する
 
