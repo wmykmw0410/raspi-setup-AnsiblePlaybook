@@ -1,5 +1,7 @@
 ---
 - import_playbook: common.yml
+  vars:
+    defer_reboot: true
 
 - name: NASサーバーセットアップ
   hosts: nas
@@ -7,6 +9,8 @@
 
   roles:
     - nas_server
+    - nas_local_backup
+    - nas_gdrive_backup
 
 - name: 再起動
   hosts: nas

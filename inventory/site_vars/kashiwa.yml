@@ -2,3 +2,7 @@
 # googledrive_password は ansible-vault encrypt_string で暗号化してから
 # 平文の TODO と置き換えてください（例: docs/setup/raspberrypi.md や README.md の Vault化手順を参照）
 googledrive_password: "TODO"
+
+# NASからGoogle Driveへの自動バックアップ用トークン（nas_gdrive_backupロールで使用）
+# 取得・暗号化手順は README の「Google Driveへの自動バックアップ設定（NASのみ・手動）」を参照
+gdrive_rclone_token: "TODO"

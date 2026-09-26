@@ -98,7 +98,7 @@ project/
 | `community.general.nmcli` | NetworkManagerの接続プロファイル管理（`static_ip` ロールでの固定IP設定） |
 | `ansible.builtin.command` / `ansible.builtin.shell` | 任意のコマンドを直接実行する「何でも屋」。対応する専用モジュールがない場合の最終手段で、べき等性は保証されないため `changed_when` / `failed_when` で挙動を自分で制御する必要があります |
 
-対応するモジュールが存在しない操作（今回だと `nmcli`・`arping`・`ip addr` の呼び出しなど）は `command`/`shell` モジュールで代替しています。その場合、実行結果を `register` で受け取り、`changed_when: false`（状態を変えない確認コマンド）や `when` 条件（重複実行の回避）と組み合わせて、擬似的にべき等な振る舞いにするのがこのリポジトリの基本パターンです（例: [roles/static_ip/tasks/set_ip.yml](../roles/static_ip/tasks/set_ip.yml)）。
+対応するモジュールが存在しない操作（今回だと `nmcli`・`arping`・`ip addr` の呼び出しなど）は `command`/`shell` モジュールで代替しています。その場合、実行結果を `register` で受け取り、`changed_when: false`（状態を変えない確認コマンド）や `when` 条件（重複実行の回避）と組み合わせて、擬似的にべき等な振る舞いにするのがこのリポジトリの基本パターンです（例: [roles/static_ip/tasks/set_ip.yml](../../roles/static_ip/tasks/set_ip.yml)）。
 
 各モジュールの詳細なパラメータは `ansible-doc <モジュール名>`（例: `ansible-doc ansible.builtin.apt`）のほか、以下の公式リファレンスでも確認できます。
 
@@ -127,7 +127,7 @@ project/
         msg: "後片付け"
 ```
 
-> このリポジトリの [playbooks/static_ip.yml](../playbooks/static_ip.yml) は `when` 条件や `register` の組み合わせでエラー処理をしており、`block`/`rescue`を使えばもう少し整理できる可能性がありますが、現状の実装で動作確認済みのため書き換えは行っていません。
+> このリポジトリの [playbooks/static_ip.yml](../../playbooks/static_ip.yml) は `when` 条件や `register` の組み合わせでエラー処理をしており、`block`/`rescue`を使えばもう少し整理できる可能性がありますが、現状の実装で動作確認済みのため書き換えは行っていません。
 
 ### ansible-pull
 

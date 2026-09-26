@@ -24,6 +24,7 @@ Raspberry Pi をNASサーバー・クライアントとして構成する Ansibl
     - [タグを指定した実行](#タグを指定した実行)
   - [VS Code の日本語化（クライアントのみ・手動）](#vs-code-の日本語化クライアントのみ手動)
   - [Googleドライブの自動ログイン設定（クライアントのみ・手動）](#googleドライブの自動ログイン設定クライアントのみ手動)
+  - [Google Driveへの自動バックアップ設定（NASのみ・手動）](#google-driveへの自動バックアップ設定nasのみ手動)
   - [NAS への接続方法](#nas-への接続方法)
   - [関連ドキュメント](#関連ドキュメント)
 
@@ -43,6 +44,8 @@ Samba によるファイル共有サーバーです。
 
 - USB ドライブ（exFAT）をマウントし、ネットワーク経由でファイル共有（`\\<NASのIPアドレス>\nas` など）を提供
 - 共有フォルダへの読み書きは Samba ユーザー（`swimmy`）で認証
+- 2台目のUSBドライブへ共有フォルダの内容を毎日自動でrsyncバックアップ（片方が故障してもデータを保持）
+- rcloneによりGoogleドライブへも毎日自動で差分バックアップ（USBが両方とも失われた場合の備え）
 
 ### クライアント（授業用PC）
 
@@ -138,6 +141,16 @@ ansible/
     │   │   ├── samba_user.yml  # Sambaユーザーの作成・パスワード設定
     │   │   └── samba_config.yml # smb.conf 配布・smbd 起動
     │   └── templates/smb.conf  # Samba 設定テンプレート
+    ├── nas_local_backup/   # NASサーバー: 2台目USBへのrsyncバックアップ
+    │   ├── defaults/main.yml   # 同期時刻のデフォルト値
+    │   └── tasks/
+    │       ├── main.yml        # include_tasks エントリーポイント
+    │       ├── mount.yml       # バックアップ用USBドライブのマウント・fstab登録
+    │       └── sync.yml        # rsyncインストール・初回同期・cronジョブ登録
+    ├── nas_gdrive_backup/  # NASサーバー: Google Driveへのrcloneバックアップ
+    │   ├── defaults/main.yml   # 同期先・同期時刻のデフォルト値
+    │   ├── tasks/main.yml      # rcloneインストール・設定配置・初回同期・cronジョブ登録
+    │   └── templates/rclone.conf.j2 # rclone 設定テンプレート
     ├── nas_mount/          # クライアント: NAS マウント設定
     ├── document/           # クライアント: Documentsフォルダに credential.txt を配置
     └── static_ip/          # 共通: 固定IPアドレスの設定・検証
@@ -353,6 +366,48 @@ common ロール（`mdns`）適用後は、各ラズパイに `<hostname>.local`
    ```bash
    sudo reboot
    ```
+
+## Google Driveへの自動バックアップ設定（NASのみ・手動）
+
+`nas_gdrive_backup` ロールは、NAS共有フォルダの内容を [rclone](https://rclone.org/) で拠点のGoogleドライブへ自動バックアップします（`--fast-list` 付きの `rclone sync` による差分同期。フォルダ構成が一致していれば新規・変更・削除されたファイルのみが転送され、毎回全量アップロードされることはありません）。ただしGoogleアカウントへの認可（OAuth）自体はAnsible化できないため、拠点ごとに初回のみ手動で行います。
+
+1. 実行元PC（ブラウザが使えるPC）に rclone をインストールする
+
+   ```bash
+   # mac
+   brew install rclone
+   ```
+
+2. 対象拠点のGoogleアカウントを認可する
+
+   ```bash
+   rclone authorize "drive"
+   ```
+
+   ブラウザが開くので、その拠点の`credential.txt`に記載されているGoogleアカウント（`inventory/site_vars/<拠点>.yml` の `googledrive_password` と同じアカウント）でログイン・許可します。完了するとターミナルに `{"access_token":...}` 形式のJSON文字列（トークン）が出力されます。
+
+3. 出力されたトークンをVault化する
+
+   ```bash
+   ansible-vault encrypt_string '<手順2で出力されたJSON文字列>' --name 'gdrive_rclone_token' --ask-vault-pass
+   ```
+
+4. 出力された `gdrive_rclone_token: !vault | ...` を、対象拠点の `inventory/site_vars/<拠点>.yml` の `gdrive_rclone_token: "TODO"` と置き換える
+
+   > 複数拠点で同じGoogleアカウントを使っている場合（六本木＝三鷹など）は、同じトークンをそれぞれの拠点ファイルにも貼り付けてください。
+
+5. `playbooks/nas.yml` を実行する（`nas_gdrive_backup` ロールが rclone のインストール・設定配置・cronジョブ登録までを自動化します）
+
+以降は自動で（デフォルトでは毎日12:30・17:00に）NAS共有フォルダがGoogleドライブの `NAS_Backup` フォルダへ同期されます。同期時刻やバックアップ先フォルダ名は [roles/nas_gdrive_backup/defaults/main.yml](roles/nas_gdrive_backup/defaults/main.yml) の `nas_gdrive_backup_sync_times`・`nas_gdrive_backup_folder` で変更できます。
+
+動作確認:
+
+```bash
+# NASサーバー上で実行
+sudo cat /var/log/nas_gdrive_sync.log
+```
+
+> トークンには長期間有効なリフレッシュトークンが含まれており、cronによる定期同期が続く限り自動更新されるため、通常はこの手順を再実行する必要はありません（Google側でアクセスを取り消した場合などを除く）。
 
 ## NAS への接続方法
 

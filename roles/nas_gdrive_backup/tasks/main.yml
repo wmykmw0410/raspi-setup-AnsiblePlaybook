@@ -1,0 +1,38 @@
+---
+- name: rclone をインストールする
+  ansible.builtin.apt:
+    name: rclone
+    state: present
+
+- name: rclone 設定ディレクトリを作成する
+  ansible.builtin.file:
+    path: /root/.config/rclone
+    state: directory
+    mode: "0700"
+
+- name: rclone.conf を配置する
+  ansible.builtin.template:
+    src: rclone.conf.j2
+    dest: /root/.config/rclone/rclone.conf
+    owner: root
+    group: root
+    mode: "0600"
+
+# rclone sync は同期先(Google Drive)と比較し、新規・変更・削除されたファイルのみを転送する
+# 差分同期のため、フォルダ構成が一致していれば毎回全量アップロードされることはない
+- name: "{{ nas_mount }} を Google Drive（{{ nas_gdrive_backup_folder }}）へ同期する"
+  ansible.builtin.command: >-
+    rclone sync {{ nas_mount }} {{ nas_gdrive_backup_remote_name }}:{{ nas_gdrive_backup_folder }}
+    --fast-list --log-file /var/log/nas_gdrive_sync.log
+  changed_when: true
+
+- name: Google Driveへ同期するcronジョブを登録する
+  ansible.builtin.cron:
+    name: "NAS共有フォルダをGoogle Driveへrcloneで同期する（{{ item.hour }}:{{ item.minute }}）"
+    minute: "{{ item.minute }}"
+    hour: "{{ item.hour }}"
+    job: >-
+      rclone sync {{ nas_mount }} {{ nas_gdrive_backup_remote_name }}:{{ nas_gdrive_backup_folder }}
+      --fast-list --log-file /var/log/nas_gdrive_sync.log
+    user: root
+  loop: "{{ nas_gdrive_backup_sync_times }}"

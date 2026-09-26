@@ -30,12 +30,16 @@ root_password: <Vault化>   # credential.txt に記載する root ユーザパ�
 ## NASサーバー専用 (`inventory/group_vars/nas.yml`)
 
 ```yaml
-samba_user: swimmy        # Samba アクセス用ユーザー
+samba_user: swimmy           # Samba アクセス用ユーザー
 samba_password: <Vault化>    # Samba パスワード
 share_name: nas              # 共有フォルダ名
-usb_device: /dev/sda1        # USB デバイスパス
-nas_mount: /media/swimmy/nas # USB マウントポイント
+usb_device: /dev/sda1        # USB デバイスパス（1台目・共有用）
+nas_mount: /media/swimmy/nas # USB マウントポイント（1台目・共有用）
+backup_usb_device: /dev/sdb1        # USB デバイスパス（2台目・バックアップ用）
+backup_mount: /media/swimmy/nas_backup # USB マウントポイント（2台目・バックアップ用）
 ```
+
+> `nas_local_backup_sync_times`（USBバックアップの同期時刻。デフォルトは毎日12:30・17:00の2回）は [roles/nas_local_backup/defaults/main.yml](../../roles/nas_local_backup/defaults/main.yml)、`nas_gdrive_backup_remote_name`・`nas_gdrive_backup_folder`・`nas_gdrive_backup_sync_times`（Google Driveバックアップの同期先・時刻。デフォルトは毎日12:30・17:00の2回）は [roles/nas_gdrive_backup/defaults/main.yml](../../roles/nas_gdrive_backup/defaults/main.yml) で定義されており、変更したい場合は `inventory/group_vars/nas.yml` 等で上書きできます。
 
 ## 拠点別 (`inventory/site_vars/<拠点>.yml`)
 
@@ -43,6 +47,7 @@ nas_mount: /media/swimmy/nas # USB マウントポイント
 
 ```yaml
 googledrive_password: <Vault化 または 平文>  # credential.txt に記載するGoogleドライブパスワード
+gdrive_rclone_token: <Vault化>           # NAS→Google Driveバックアップ用rcloneトークン（nas_gdrive_backupロールで使用）
 
 extra_shortcuts:                        # ブラウザ新しいタブページに表示する拠点固有ショートカット
   - label: 座席表
@@ -50,6 +55,8 @@ extra_shortcuts:                        # ブラウザ新しいタブページ�
   - label: GoogleDrive
     url: "https://drive.google.com/..."
 ```
+
+> `gdrive_rclone_token` の取得・暗号化手順は [README の「Google Driveへの自動バックアップ設定（NASのみ・手動）」](../../README.md#google-driveへの自動バックアップ設定nasのみ手動) を参照してください。
 
 ## インベントリのホスト変数 (`inventory/<拠点>.ini`)
 

@@ -1,0 +1,6 @@
+---
+nas_local_backup_sync_times:
+  - hour: "12"
+    minute: "30"
+  - hour: "17"
+    minute: "0"

@@ -7,6 +7,10 @@ googledrive_password: !vault |
           6534373734303064360a316364346464353361336461316438383361626339376366353038613161
           3961
 
+# NASからGoogle Driveへの自動バックアップ用トークン（nas_gdrive_backupロールで使用）
+# 取得・暗号化手順は README の「Google Driveへの自動バックアップ設定（NASのみ・手動）」を参照
+gdrive_rclone_token: "TODO"
+
 # ブラウザ新しいタブページに表示する拠点固有ショートカット（browserロールで使用）
 extra_shortcuts:
   - label: 座席表

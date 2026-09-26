@@ -1,0 +1,16 @@
+---
+- name: "{{ backup_mount }} マウントポイントを作成する"
+  ansible.builtin.file:
+    path: "{{ backup_mount }}"
+    state: directory
+    mode: "0755"
+
+- name: "{{ backup_usb_device }} を {{ backup_mount }} にマウントして fstab に登録する"
+  ansible.builtin.mount:
+    path: "{{ backup_mount }}"
+    src: "{{ backup_usb_device }}"
+    fstype: exfat
+    opts: defaults,nofail,umask=000
+    state: mounted
+    dump: "0"
+    passno: "0"

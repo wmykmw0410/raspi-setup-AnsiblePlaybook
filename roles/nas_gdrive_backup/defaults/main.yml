@@ -1,0 +1,8 @@
+---
+nas_gdrive_backup_remote_name: gdrive
+nas_gdrive_backup_folder: NAS_Backup
+nas_gdrive_backup_sync_times:
+  - hour: "12"
+    minute: "30"
+  - hour: "17"
+    minute: "0"

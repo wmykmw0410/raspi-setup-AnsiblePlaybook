@@ -1,5 +1,7 @@
 ---
 - import_playbook: common.yml
+  vars:
+    defer_reboot: true
 
 - name: クライアントセットアップ
   hosts: client

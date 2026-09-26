@@ -8,6 +8,12 @@ googledrive_password: !vault |
           6137376334633163310a613131633733343061646135363065333436323437373062653838336139
           6137
 
+# NASからGoogle Driveへの自動バックアップ用トークン（nas_gdrive_backupロールで使用）
+# googledrive_password と同じく三鷹拠点と同じGoogleアカウントを使う場合は、
+# 三鷹拠点で取得したトークンと同じ値を暗号化して設定してください
+# 取得・暗号化手順は README の「Google Driveへの自動バックアップ設定（NASのみ・手動）」を参照
+gdrive_rclone_token: "TODO"
+
 # ブラウザ新しいタブページに表示する拠点固有ショートカット（browserロールで使用）
 # 座席表は六本木拠点でまだ作成していないため未追加（作成後に追加してください）
 extra_shortcuts:

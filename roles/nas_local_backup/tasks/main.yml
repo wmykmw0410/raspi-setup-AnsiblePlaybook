@@ -1,0 +1,8 @@
+---
+- name: バックアップ用USBマウント設定を読み込む
+  ansible.builtin.include_tasks: mount.yml
+  tags: backup_mount
+
+- name: バックアップ同期設定を読み込む
+  ansible.builtin.include_tasks: sync.yml
+  tags: backup_sync

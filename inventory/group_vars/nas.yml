@@ -9,3 +9,5 @@ samba_password: !vault |
 share_name: nas
 usb_device: /dev/sda1
 nas_mount: /media/swimmy/nas
+backup_usb_device: /dev/sdb1
+backup_mount: /media/swimmy/nas_backup
