@@ -7,6 +7,8 @@
     state: present
     update_cache: true
 
+# click・jinja2・pyjwt など、Raspberry Pi OS に apt 経由（RECORDファイルなし）で入っているパッケージは
+# pip がアンインストールできず失敗する。--ignore-installed で apt 版を削除せずに pip 版をインストールする
 - name: ライブラリ・モジュールをインストールする
   ansible.builtin.pip:
     name:
@@ -29,14 +31,6 @@
       - wtforms==3.0.1
       - greenlet==3.4.0
       - keyboard
-    state: present
-    extra_args: --break-system-packages
-
-# PyJWT は Raspberry Pi OS に apt 経由（RECORDファイルなし）で入っているため、
-# 通常のpipアンインストール処理ができず失敗する。--ignore-installed でファイルを直接上書きする
-- name: pyjwt をインストールする
-  ansible.builtin.pip:
-    name:
       - pyjwt==2.12.1
     state: present
     extra_args: --break-system-packages --ignore-installed
