@@ -56,7 +56,7 @@ Samba によるファイル共有サーバーです。
 - **Minecraft Pi**: Python（`mcpi` ライブラリ）でMinecraftを操作する学習環境
 - **Scratch 3**: ビジュアルプログラミング環境（`scratch3`）
 - **Python環境**: `pygame` / `flask` / `keyboard` 等の学習用ライブラリを導入
-- **NASマウント**: NASサーバーの共有フォルダを起動時に自動マウント（`/mnt/nas`）
+- **NASマウント**: NASサーバーの共有フォルダを起動時に自動マウント（`/mnt/nas`）し、デスクトップにショートカット（`NAS`）を作成
 - **credential.txt**: `~/Documents` に、rootパスワード・Googleドライブパスワードを記載したファイルを配置（拠点固有の値は `inventory/site_vars/<拠点>.yml` で設定。詳細は[変数リファレンス](docs/reference/variables.md)）
 
 ### 共通機能（NAS・クライアント共通）
@@ -153,7 +153,7 @@ ansible/
     │   ├── defaults/main.yml   # 同期先・同期時刻のデフォルト値
     │   ├── tasks/main.yml      # rcloneインストール・設定配置・初回同期・cronジョブ登録
     │   └── templates/rclone.conf.j2 # rclone 設定テンプレート
-    ├── nas_mount/          # クライアント: NAS マウント設定
+    ├── nas_mount/          # クライアント: NAS マウント設定・デスクトップショートカット作成
     ├── document/           # クライアント: Documentsフォルダに credential.txt を配置
     └── static_ip/          # 共通: 固定IPアドレスの設定・検証
         └── tasks/

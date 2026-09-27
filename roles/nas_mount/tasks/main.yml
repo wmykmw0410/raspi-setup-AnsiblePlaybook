@@ -18,3 +18,20 @@
     line: "//{{ groups['nas'][0] }}.local/{{ nas_share }}   {{ mount_point }}   cifs   username={{ nas_user }},password={{ nas_pass }},iocharset=utf8,uid=1000,gid=1000,nofail,_netdev   0   0"
     create: true
     mode: "0644"
+
+- name: デスクトップディレクトリを作成する
+  ansible.builtin.file:
+    path: "/home/{{ local_user }}/Desktop"
+    state: directory
+    owner: "{{ local_user }}"
+    group: "{{ local_user }}"
+    mode: "0755"
+
+- name: デスクトップに NAS フォルダのショートカットを作成する
+  ansible.builtin.file:
+    src: "{{ mount_point }}"
+    dest: "/home/{{ local_user }}/Desktop/NAS"
+    state: link
+    owner: "{{ local_user }}"
+    group: "{{ local_user }}"
+    follow: false
