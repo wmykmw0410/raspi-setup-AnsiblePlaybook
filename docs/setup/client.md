@@ -11,7 +11,7 @@
 | ログインユーザー | `swimmy` |
 | NASサーバーのホスト名 | `raspi-nas.local` |
 | NAS共有フォルダ名 | `nas` |
-| NAS接続用ユーザー | `swimmy`（[NAS 手動設定手順](nas.md)参照） |
+| NAS接続用ユーザー | `sambauser`（[NAS 手動設定手順](nas.md)参照） |
 | クライアント側マウントポイント | `/mnt/nas` |
 
 ## 1. NAS共有フォルダをマウントする
@@ -26,7 +26,7 @@ sudo apt install -y cifs-utils
 `/etc/fstab` に以下の1行を追記します（ホスト名・共有名・ユーザー名・パスワードは環境に合わせて変更）。
 
 ```
-//raspi-nas.local/nas   /mnt/nas   cifs   username=swimmy,password=<NASのパスワード>,iocharset=utf8,uid=1000,gid=1000,nofail,_netdev   0   0
+//raspi-nas.local/nas   /mnt/nas   cifs   username=sambauser,password=<NASのパスワード>,iocharset=utf8,uid=1000,gid=1000,nofail,_netdev   0   0
 ```
 
 ```bash

@@ -1,4 +1,10 @@
 ---
+- name: "{{ samba_user }} システムユーザーを作成する"
+  ansible.builtin.user:
+    name: "{{ samba_user }}"
+    shell: /usr/sbin/nologin
+    create_home: false
+
 - name: "{{ samba_user }} が Samba に登録済みか確認する"
   ansible.builtin.command: pdbedit -L
   register: nas_server_pdbedit_list
@@ -9,7 +15,7 @@
     cmd: "set -o pipefail && printf '{{ samba_password }}\n{{ samba_password }}\n' | smbpasswd -a -s {{ samba_user }}"
     executable: /bin/bash
   no_log: true
-  when: samba_user not in nas_server_pdbedit_list.stdout
+  when: samba_user not in (nas_server_pdbedit_list.stdout_lines | map('split', ':') | map('first'))
   changed_when: true
 
 - name: "{{ samba_user }} を有効化する"

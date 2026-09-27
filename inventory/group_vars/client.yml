@@ -1,5 +1,5 @@
 nas_share: nas
-nas_user: swimmy
+nas_user: sambauser
 nas_pass: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           39313363396433303732626130303166313039643830626631363835323037383234333333376663

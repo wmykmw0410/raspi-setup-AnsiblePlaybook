@@ -13,6 +13,8 @@
 - name: fstab に NAS マウント設定追加
   ansible.builtin.lineinfile:
     path: /etc/fstab
+    # 接続ユーザーを変更した場合も、同じマウントポイントの行を置き換える
+    regexp: '^//\S+/{{ nas_share }}\s+{{ mount_point }}\s'
     line: "//{{ groups['nas'][0] }}.local/{{ nas_share }}   {{ mount_point }}   cifs   username={{ nas_user }},password={{ nas_pass }},iocharset=utf8,uid=1000,gid=1000,nofail,_netdev   0   0"
     create: true
     mode: "0644"

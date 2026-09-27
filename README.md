@@ -43,7 +43,7 @@ Ansible は、サーバーやPCなどの構成管理・自動化を行うオー�
 Samba によるファイル共有サーバーです。
 
 - USB ドライブ（exFAT）をマウントし、ネットワーク経由でファイル共有（`\\<NASのIPアドレス>\nas` など）を提供
-- 共有フォルダへの読み書きは Samba ユーザー（`swimmy`）で認証
+- 共有フォルダへの読み書きは Samba ユーザー（`sambauser`）で認証
 - 2台目のUSBドライブへ共有フォルダの内容を毎日自動でrsyncバックアップ（片方が故障してもデータを保持）
 - rcloneによりGoogleドライブへも毎日自動で差分バックアップ（USBが両方とも失われた場合の備え）
 
@@ -140,7 +140,7 @@ ansible/
     │   │   ├── ansible.yml     # Ansible本体のインストール（NAS上でも実行できるように）
     │   │   ├── usb_mount.yml   # USBドライブのマウント・fstab登録
     │   │   ├── samba_install.yml # Samba・exFATサポートのインストール
-    │   │   ├── samba_user.yml  # Sambaユーザーの作成・パスワード設定
+    │   │   ├── samba_user.yml  # Sambaユーザー（sambauser）の作成・パスワード設定
     │   │   └── samba_config.yml # smb.conf 配布・smbd 起動
     │   └── templates/smb.conf  # Samba 設定テンプレート
     ├── nas_local_backup/   # NASサーバー: 2台目USBへのrsyncバックアップ
@@ -421,13 +421,13 @@ ansible localhost -m debug -a "var=samba_password" -e "@inventory/group_vars/nas
 
 | 項目 | デフォルト値 |
 |---|---|
-| ユーザー名 | `swimmy` |
+| ユーザー名 | `sambauser` |
 | パスワード | ****** |
 
 | OS | 方法 |
 |---|---|
 | Windows | エクスプローラーに `\\<NASのIPアドレス>\nas` を入力し、上記で認証 |
-| Linux（CLI） | `smbclient //<NASのIPアドレス>/nas -U swimmy` を実行しパスワードを入力 |
+| Linux（CLI） | `smbclient //<NASのIPアドレス>/nas -U sambauser` を実行しパスワードを入力 |
 | Linux（GUI） | ファイルマネージャーのアドレス欄に `smb://<NASのIPアドレス>/nas` を入力し、上記で認証 |
 
 NASのIPアドレスは拠点ごとのインベントリファイルの `[nas]` セクションを参照してください。

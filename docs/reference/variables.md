@@ -19,7 +19,7 @@ dns_servers:                              # 固定IP化時に設定するDNSサ�
 
 ```yaml
 nas_share: nas             # 共有フォルダ名
-nas_user: swimmy        # Samba ユーザー名
+nas_user: sambauser     # Samba ユーザー名（NAS 側の samba_user と揃える）
 nas_pass: <Vault化>        # Samba パスワード
 mount_point: /mnt/nas      # クライアント側マウントポイント
 root_password: <Vault化>   # credential.txt に記載する root ユーザパスワード（全拠点共通）
@@ -30,7 +30,7 @@ root_password: <Vault化>   # credential.txt に記載する root ユーザパ�
 ## NASサーバー専用 (`inventory/group_vars/nas.yml`)
 
 ```yaml
-samba_user: swimmy           # Samba アクセス用ユーザー
+samba_user: sambauser        # Samba アクセス用ユーザー（ログイン不可のシステムユーザーとして作成）
 samba_password: <Vault化>    # Samba パスワード
 share_name: nas              # 共有フォルダ名
 usb_device: /dev/sda1        # USB デバイスパス（1台目・共有用）

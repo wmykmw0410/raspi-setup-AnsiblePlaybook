@@ -6,7 +6,8 @@ Ansible を使わずに、NASサーバー用のラズパイをコマンド操作
 
 | 項目 | 例 |
 |---|---|
-| ログインユーザー / Sambaユーザー | `swimmy` |
+| ログインユーザー | `swimmy` |
+| Sambaユーザー | `sambauser` |
 | USBデバイスパス（1台目・共有用） | `/dev/sda1` |
 | マウントポイント（1台目・共有用） | `/media/swimmy/nas` |
 | USBデバイスパス（2台目・バックアップ用） | `/dev/sdb1` |
@@ -93,14 +94,17 @@ sudo apt install samba exfatprogs
 
 ## 4. Samba ユーザーを作成する
 
-ログインユーザー（`swimmy`）をそのままSambaユーザーとして登録します。
+Samba専用のシステムユーザー（`sambauser`）を作成し、Sambaユーザーとして登録します。
 
 ```bash
+# Samba専用のシステムユーザーを作成する（ログイン不可・ホームディレクトリなし）
+sudo useradd -M -s /usr/sbin/nologin sambauser
+
 # Sambaユーザーとして登録し、パスワードを設定する（対話式でパスワード入力を求められます）
-sudo smbpasswd -a swimmy
+sudo smbpasswd -a sambauser
 
 # ユーザーを有効化する
-sudo smbpasswd -e swimmy
+sudo smbpasswd -e sambauser
 ```
 
 ## 5. smb.conf を設定する
@@ -130,7 +134,7 @@ sudo nano /etc/samba/smb.conf
    browseable = yes
    writable = yes
 
-   valid users = swimmy
+   valid users = sambauser
    force user = swimmy
    force group = swimmy
 
