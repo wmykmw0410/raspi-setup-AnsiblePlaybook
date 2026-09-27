@@ -1,0 +1,6 @@
+---
+- name: scratch3 をインストールする
+  ansible.builtin.apt:
+    name: scratch3
+    state: present
+    update_cache: true

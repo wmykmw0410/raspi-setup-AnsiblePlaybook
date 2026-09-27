@@ -31,5 +31,7 @@
       tags: vscode
     - role: minecraft
       tags: minecraft
+    - role: scratch
+      tags: scratch
     - role: mdns
       tags: mdns

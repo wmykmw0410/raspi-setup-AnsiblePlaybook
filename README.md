@@ -54,6 +54,7 @@ Samba によるファイル共有サーバーです。
 - **ブラウザ（Chromium）**: ホームページ・新しいタブページを教材ページに固定するポリシーを配信
 - **VS Code**: 学習用拡張機能をインストール済み
 - **Minecraft Pi**: Python（`mcpi` ライブラリ）でMinecraftを操作する学習環境
+- **Scratch 3**: ビジュアルプログラミング環境（`scratch3`）
 - **Python環境**: `pygame` / `flask` / `keyboard` 等の学習用ライブラリを導入
 - **NASマウント**: NASサーバーの共有フォルダを起動時に自動マウント（`/mnt/nas`）
 - **credential.txt**: `~/Documents` に、rootパスワード・Googleドライブパスワードを記載したファイルを配置（拠点固有の値は `inventory/site_vars/<拠点>.yml` で設定。詳細は[変数リファレンス](docs/reference/variables.md)）
@@ -130,6 +131,7 @@ ansible/
     │   │   └── settings.yml    # ユーザー設定（エクスプローラー・キーボードショートカット等）
     │   └── files/extensions.txt # 拡張機能リスト
     ├── minecraft/          # 共通: Minecraft Pi
+    ├── scratch/            # 共通: Scratch 3 インストール
     ├── mdns/               # 共通: avahi-daemon による mDNS (.local) 名前解決
     ├── nas_server/         # NASサーバー: Samba・USB マウント設定
     │   ├── handlers/main.yml   # ハンドラ（smbd 再起動）
@@ -297,7 +299,7 @@ ansible-playbook -i inventory/mitaka.ini playbooks/nas.yml --check --diff --ask-
 
 ### タグを指定した実行
 
-`common.yml`（`base` / `locale` / `keyboard` / `browser` / `python_env` / `git` / `screenshot` / `vscode` / `minecraft` / `mdns`）と `static_ip.yml`（`mdns` / `static_ip` / `static_ip_check`）の各ロールにはタグが付いています。`--tags`・`--skip-tags` で一部のロールだけ実行・除外できます。
+`common.yml`（`base` / `locale` / `keyboard` / `browser` / `python_env` / `git` / `screenshot` / `vscode` / `minecraft` / `scratch` / `mdns`）と `static_ip.yml`（`mdns` / `static_ip` / `static_ip_check`）の各ロールにはタグが付いています。`--tags`・`--skip-tags` で一部のロールだけ実行・除外できます。
 
 ```bash
 # browser ロールだけ実行
